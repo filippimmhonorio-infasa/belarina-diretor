@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0d3557">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Belarina DIR">
+<link rel="manifest" href="manifest.json">
+<title>Belarina — Diretor</title>
+<style>
+:root{--azul:#0d3557;--azul2:#1a4f7a;--dourado:#eeb04a;--dourado2:#d9a040;--fundo:#f0f3f7;--branco:#fff;--borda:#dde1ea;--texto:#1a2840;--muted:#6b7a90;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--fundo);min-height:100vh;}
+.header{background:var(--azul);padding:12px 16px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.header-top{display:flex;align-items:center;justify-content:space-between;}
+.header img{height:40px;}
+.header-sub{color:var(--dourado);font-size:11px;margin-top:4px;opacity:.9;}
+.btn-cad{background:rgba(255,255,255,.15);border:none;border-radius:8px;color:var(--dourado);font-size:13px;font-weight:600;padding:7px 12px;cursor:pointer;}
+.tabs{display:flex;background:var(--azul2);}
+.tab{flex:1;padding:10px;text-align:center;color:rgba(255,255,255,.6);font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;}
+.tab.ativo{color:var(--dourado);border-bottom-color:var(--dourado);}
+.page{display:none;}.page.ativo{display:block;}
+.content{padding:14px;display:flex;flex-direction:column;gap:12px;max-width:600px;margin:0 auto;}
+.card{background:var(--branco);border-radius:14px;overflow:hidden;border:1px solid #e2e6ef;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.card-titulo{background:var(--azul);color:var(--dourado);font-size:10.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:8px 14px;}
+.card-body{padding:14px;display:flex;flex-direction:column;gap:10px;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:10.5px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.6px;}
+.field select,.field input{background:#f7f8fc;border:1.5px solid var(--borda);border-radius:9px;padding:10px 12px;font-size:14px;color:var(--texto);width:100%;appearance:none;-webkit-appearance:none;outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7a90' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.field input{background-image:none;}
+.field select:focus,.field input:focus{border-color:var(--dourado);background:#fff;}
+.btn-calc{background:var(--dourado);color:var(--azul);border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:800;width:100%;cursor:pointer;}
+.btn-salvar{background:var(--dourado);color:var(--azul);border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:800;width:100%;cursor:pointer;margin-top:8px;}
+.result-card{background:var(--azul);border-radius:14px;padding:20px 16px;display:none;}
+.result-card.visivel{display:block;}
+.result-label{color:rgba(255,255,255,.65);font-size:10.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px;}
+.result-valor{color:var(--dourado);font-size:38px;font-weight:800;letter-spacing:-.5px;}
+.result-sub{color:rgba(255,255,255,.5);font-size:12px;margin-top:8px;line-height:1.5;}
+.breakdown{background:var(--branco);border-radius:14px;border:1px solid #e2e6ef;overflow:hidden;display:none;}
+.breakdown.visivel{display:block;}
+.bd-titulo{font-size:10.5px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.8px;padding:12px 14px 8px;border-bottom:1px solid #f0f2f6;}
+.bd-row{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;font-size:13px;border-bottom:1px solid #f5f6f9;}
+.bd-row:last-child{border-bottom:none;}
+.bd-row .desc{color:var(--muted);}
+.bd-row .val{font-weight:600;color:var(--texto);}
+.bd-row.dest{background:#f0f5fc;}
+.bd-row.dest .desc,.bd-row.dest .val{color:var(--azul);font-weight:600;}
+.bd-row.total{background:#f7f9fc;}
+.bd-row.total .desc{color:var(--azul);font-weight:700;font-size:13.5px;}
+.bd-row.total .val{color:var(--azul);font-weight:800;font-size:15px;}
+.trib-sub{padding:2px 14px 8px;display:flex;gap:16px;flex-wrap:wrap;}
+.trib-item{font-size:11px;color:#9ba8bc;}
+.trib-item span{font-weight:600;}
+.cad-menu{display:flex;flex-direction:column;gap:10px;}
+.cad-item{background:var(--branco);border-radius:14px;padding:16px;display:flex;align-items:center;gap:14px;border:1px solid #e2e6ef;cursor:pointer;}
+.cad-item:hover{background:#f7f9fc;}
+.cad-icone{width:44px;height:44px;background:#f0f4f8;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.cad-texto{flex:1;}
+.cad-titulo{font-size:15px;font-weight:700;color:var(--azul);margin-bottom:2px;}
+.cad-desc{font-size:12px;color:var(--muted);}
+.aviso{background:#fff8e8;border-radius:10px;padding:12px 14px;font-size:12px;color:#7a5a00;border:1px solid #f0d080;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;}
+.modal-overlay.visivel{display:flex;}
+.modal{background:var(--branco);border-radius:20px 20px 0 0;width:100%;max-height:85vh;overflow-y:auto;padding-bottom:32px;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0f2f6;position:sticky;top:0;background:var(--branco);}
+.modal-titulo{font-size:17px;font-weight:700;color:var(--azul);}
+.modal-fechar{background:none;border:none;font-size:28px;color:var(--muted);cursor:pointer;line-height:1;}
+.modal-body{padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
+.c-edit{display:flex;flex-direction:column;gap:4px;}
+.c-label{font-size:12px;font-weight:700;color:var(--azul);}
+.c-dica{font-size:11px;color:var(--muted);}
+.c-row{display:flex;align-items:center;}
+.c-afx{background:#f0f4f8;border:1.5px solid var(--borda);padding:9px 10px;font-size:13px;color:var(--muted);}
+.c-afx.pre{border-right:none;border-radius:8px 0 0 8px;}
+.c-afx.suf{border-left:none;border-radius:0 8px 8px 0;}
+.c-inp{flex:1;background:#f7f8fc;border:1.5px solid var(--borda);padding:9px 12px;font-size:14px;color:var(--texto);outline:none;border-radius:8px;}
+.c-inp.pre{border-radius:0 8px 8px 0;}
+.c-inp.suf{border-radius:8px 0 0 8px;}
+.c-inp:focus{border-color:var(--dourado);}
+.sec-label{font-size:11px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.8px;padding:8px 0 4px;border-top:1px solid #f0f2f6;margin-top:4px;}
+.loading{text-align:center;padding:40px;color:var(--muted);font-size:14px;}
+.spinner{width:32px;height:32px;border:3px solid #dde1ea;border-top-color:var(--dourado);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pb{height:32px;}
+
+/* LOGIN */
+.login-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--azul);padding:24px;}
+.login-card{background:var(--branco);border-radius:20px;padding:32px 24px;width:100%;max-width:380px;display:flex;flex-direction:column;align-items:center;gap:20px;}
+.login-logo{height:50px;margin-bottom:4px;}
+.login-titulo{font-size:18px;font-weight:800;color:var(--azul);}
+.login-sub{font-size:13px;color:var(--muted);text-align:center;margin-top:-12px;}
+.login-field{display:flex;flex-direction:column;gap:5px;width:100%;}
+.login-field label{font-size:11px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.6px;}
+.login-field input{background:#f7f8fc;border:1.5px solid var(--borda);border-radius:10px;padding:12px 14px;font-size:15px;color:var(--texto);width:100%;outline:none;}
+.login-field input:focus{border-color:var(--dourado);}
+.login-erro{font-size:12px;color:#e53935;text-align:center;background:#fff5f5;border-radius:8px;padding:8px 12px;width:100%;display:none;}
+.login-erro.visivel{display:block;}
+.btn-login{background:var(--dourado);color:var(--azul);border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:800;width:100%;cursor:pointer;}
+.btn-login:active{background:var(--dourado2);}
+.login-rodape{color:rgba(255,255,255,.4);font-size:11px;text-align:center;margin-top:8px;}
+</style>
+</head>
+<body>
+
+
+<div id="loginPage" class="login-page">
+  <div class="login-card">
+    <img src="logo.png" alt="Belarina" class="login-logo">
+    <div class="login-titulo">Área do Diretor</div>
+    <div class="login-sub">Acesso restrito — Belarina Alimentos</div>
+    <div class="login-field">
+      <label>Usuário</label>
+      <input type="text" id="loginUsuario" placeholder="Digite seu usuário" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('loginSenha').focus()">
+    </div>
+    <div class="login-field">
+      <label>Senha</label>
+      <input type="password" id="loginSenha" placeholder="Digite sua senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')fazerLogin()">
+    </div>
+    <div class="login-erro" id="loginErro">Usuário ou senha incorretos.</div>
+    <button class="btn-login" onclick="fazerLogin()">Entrar</button>
+  </div>
+  <div class="login-rodape">Belarina Alimentos © 2025</div>
+</div>
+
+<div class="header" id="appContent" style="display:none">
+  <div class="header-top">
+    <img src="logo.png" alt="Belarina">
+    <button class="btn-cad" onclick="mudarTab('cadastros')">⚙️ Cadastros</button>
+  </div>
+  <div class="header-sub">Precificador — Visão Diretor</div>
+</div>
+
+<div class="tabs" id="appTabs" style="display:none">
+  <div class="tab ativo" onclick="mudarTab('precificador')">Precificador</div>
+  <div class="tab" onclick="mudarTab('cadastros')">Cadastros</div>
+</div>
+
+<div id="page-precificador" class="page ativo">
+  <div id="loading-prec" class="loading"><div class="spinner"></div>Carregando dados...</div>
+  <div id="form-prec" style="display:none">
+    <div class="content">
+      <div class="card">
+        <div class="card-titulo">Produto &amp; Embalagem</div>
+        <div class="card-body">
+          <div class="row2">
+            <div class="field"><label>Produto</label><select id="produto" onchange="limparResultado()"></select></div>
+            <div class="field"><label>Embalagem</label><select id="embalagem" onchange="limparResultado()"></select></div>
+          </div>
+          <div class="field">
+            <label>Cliente / Aplicação</label>
+            <select id="cliente" onchange="limparResultado()">
+              <option value="atacado">Atacado / Revenda / CD</option>
+              <option value="ind_cervejeira">Ind. Cervejeira</option>
+              <option value="ind_racao">Ind. Ração Animal</option>
+              <option value="varejo">Varejo</option>
+              <option value="varejo_sn" selected>Varejo Simples Nacional</option>
+              <option value="mineracao">Mineração</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-titulo">Destino &amp; Frete</div>
+        <div class="card-body">
+          <div class="row2">
+            <div class="field"><label>UF Destino</label>
+              <select id="uf" onchange="filtrarCidades()">
+                <option value="AC">Acre</option><option value="AL">Alagoas</option><option value="AM">Amazonas</option><option value="AP">Amapá</option><option value="BA">Bahia</option><option value="CE">Ceará</option><option value="DF">Distrito Federal</option><option value="ES">Espírito Santo</option><option value="GO">Goiás</option><option value="MA">Maranhão</option><option value="MG">Minas Gerais</option><option value="MS">Mato Grosso do Sul</option><option value="MT">Mato Grosso</option><option value="PA">Pará</option><option value="PB">Paraíba</option><option value="PE">Pernambuco</option><option value="PI">Piauí</option><option value="PR" selected>Paraná</option><option value="RJ">Rio de Janeiro</option><option value="RN">Rio Grande do Norte</option><option value="RO">Rondônia</option><option value="RR">Roraima</option><option value="RS">Rio Grande do Sul</option><option value="SC">Santa Catarina</option><option value="SE">Sergipe</option><option value="SP">São Paulo</option><option value="TO">Tocantins</option>
+              </select>
+            </div>
+            <div class="field"><label>Cidade</label><select id="cidade" onchange="limparResultado()"></select></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label>Pedágio (R$)</label><input type="number" id="pedagio" value="1569.60" step="10"></div>
+            <div class="field"><label>Capacidade (ton)</label><input type="number" id="capacidade" value="35" step="1" min="1"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-titulo">Condições Comerciais</div>
+        <div class="card-body">
+          <div class="field"><label>Prazo de Pagamento Médio (dias)</label><input type="number" id="prazo" value="35" min="0" max="99" maxlength="2" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,2)"></div>
+        </div>
+      </div>
+      <button class="btn-calc" onclick="calcular()">Calcular Preço de Venda</button>
+      <div class="result-card" id="resultCard">
+        <div class="result-label">Preço Final de Venda / Tonelada</div>
+        <div class="result-valor" id="rValor">—</div>
+        <div class="result-sub" id="rSub"></div>
+      </div>
+      <div class="breakdown" id="breakdown">
+        <div class="bd-titulo">Composição Completa do Preço</div>
+        <div class="bd-row"><span class="desc">📦 Custo de Produção / ton</span><span class="val" id="bCusto">—</span></div>
+        <div class="bd-row"><span class="desc">🌽 FOB Produto / ton</span><span class="val" id="bFob">—</span></div>
+        <div class="bd-row dest"><span class="desc">📊 Preço NET FOB</span><span class="val" id="bNetFob">—</span></div>
+        <div class="bd-row"><span class="desc">🛣️ KM rodados</span><span class="val" id="bKm">—</span></div>
+        <div class="bd-row"><span class="desc">🚛 Frete Líquido</span><span class="val" id="bFreteLiq">—</span></div>
+        <div class="bd-row"><span class="desc">🚚 Margem Transportadora</span><span class="val" id="bMargFrete">—</span></div>
+        <div class="bd-row"><span class="desc">📋 ICMS Frete (12%)</span><span class="val" id="bIcmsFrete">—</span></div>
+        <div class="bd-row"><span class="desc">🅿️ Pedágio</span><span class="val" id="bPedagio">—</span></div>
+        <div class="bd-row dest"><span class="desc">🚛 Frete Total</span><span class="val" id="bFrete">—</span></div>
+        <div class="bd-row"><span class="desc">📍 Frete / ton</span><span class="val" id="bFreteTon">—</span></div>
+        <div class="bd-row"><span class="desc">⏱ Custo Financeiro</span><span class="val" id="bFin">—</span></div>
+        <div class="bd-row"><span class="desc">🧾 Carga Tributária</span><span class="val" id="bTrib">—</span></div>
+        <div class="trib-sub" id="tribSub"></div>
+        <div class="bd-row"><span class="desc">📈 Margem (10%)</span><span class="val" id="bMargem">—</span></div>
+        <div class="bd-row total"><span class="desc">Preço Final / ton</span><span class="val" id="bTotal">—</span></div>
+      </div>
+      <div class="pb"></div>
+    </div>
+  </div>
+</div>
+
+<div id="page-cadastros" class="page">
+  <div class="content">
+    <div class="aviso">⚠️ Alterações aqui refletem em todos os celulares imediatamente.</div>
+    <div class="cad-menu">
+      <div class="cad-item" onclick="abrirModal('premissas')"><div class="cad-icone">📊</div><div class="cad-texto"><div class="cad-titulo">Premissas</div><div class="cad-desc">CDI, custo de captação e senha do app</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
+      <div class="cad-item" onclick="abrirModal('formacaoPreco')"><div class="cad-icone">🌽</div><div class="cad-texto"><div class="cad-titulo">Formação de Preço</div><div class="cad-desc">Custo base do Milho Degerminado</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
+      <div class="cad-item" onclick="abrirModal('precoSA')"><div class="cad-icone">🏷️</div><div class="cad-texto"><div class="cad-titulo">Preço S.A. (Derivação)</div><div class="cad-desc">Fatores e FOB fixo por produto</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
+      <div class="cad-item" onclick="abrirModal('estruturaCustos')"><div class="cad-icone">📦</div><div class="cad-texto"><div class="cad-titulo">Estrutura de Custos</div><div class="cad-desc">Custo de produção por embalagem</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
+      <div class="cad-item" onclick="abrirModal('frete')"><div class="cad-icone">🚛</div><div class="cad-texto"><div class="cad-titulo">Frete</div><div class="cad-desc">ANTT, carga/descarga, margem e distâncias</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
+      <div class="cad-item" onclick="abrirModal('cargaTrib')"><div class="cad-icone">🧾</div><div class="cad-texto"><div class="cad-titulo">Carga Tributária</div><div class="cad-desc">ICMS, FUNDEIC, PIS/COFINS por produto e UF</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
+    </div>
+    <div class="pb"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="fecharSeFora(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <span class="modal-titulo" id="modalTitulo"></span>
+      <button class="modal-fechar" onclick="fecharModal()">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script type="module">
+import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import{getFirestore,doc,getDoc,setDoc}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const app=initializeApp({apiKey:"AIzaSyCdOfDyGw1jJ8jetIWwIC6qtslzxhD7GKw",authDomain:"precificador-cuiaba.firebaseapp.com",projectId:"precificador-cuiaba",storageBucket:"precificador-cuiaba.firebasestorage.app",messagingSenderId:"222825052016",appId:"1:222825052016:web:76c86a4b4a570917d201b5"});
+const db=getFirestore(app);
+
+const PADRAO={
+  premissas:{cdi:0.144,custoCaptacao:1.10,senha:'1234',usuarioDir:'diretor',senhaDir:'belarina2025'},
+  formacaoPreco:{custoMilhoBase:1065.6620513970588},
+  precoSA:{milho_deg:{label:'Milho Degerminado',fator:1.00,fobFixo:null},canjicao:{label:'Canjicão',fator:1.10,fobFixo:null},canjica:{label:'Canjica',fator:1.10,fobFixo:null},gritz_grosso:{label:'Gritz Grosso',fator:1.05,fobFixo:null},gritz_medio:{label:'Gritz Médio',fator:1.05,fobFixo:null},gritz_fino:{label:'Gritz Fino',fator:1.05,fobFixo:null},fuba:{label:'Fubá',fator:0.95,fobFixo:null},germe:{label:'Gérmen de Milho',fator:null,fobFixo:677.44}},
+  estruturaCustos:{granel:{label:'Granel',custo:99.989},sacaria_25:{label:'Sacaria 25kg',custo:145.987},sacaria_50:{label:'Sacaria 50kg',custo:145.987},big_bag:{label:'Big Bag',custo:125.987}},
+  frete:{antt:7.8952,cargaDescarga:803.22,margem:0.10,icmsFrete:0.12,distancias:{MT:[{cidade:'Cuiabá',km:0},{cidade:'Várzea Grande',km:8},{cidade:'Rondonópolis',km:212},{cidade:'Sorriso',km:500},{cidade:'Sinop',km:503}],MS:[{cidade:'Corumbá',km:426},{cidade:'Campo Grande',km:694},{cidade:'Três Lagoas',km:985},{cidade:'Dourados',km:935}],GO:[{cidade:'Rio Verde',km:731},{cidade:'Goiânia',km:892},{cidade:'Aparecida de Goiânia',km:895},{cidade:'Anápolis',km:926}],RO:[{cidade:'Vilhena',km:735},{cidade:'Cacoal',km:892},{cidade:'Ji-Paraná',km:981},{cidade:'Ariquemes',km:1108},{cidade:'Porto Velho',km:1452}],SP:[{cidade:'Presidente Prudente',km:1294},{cidade:'São José do Rio Preto',km:1329},{cidade:'Bauru',km:1432},{cidade:'Franca',km:1454},{cidade:'Ribeirão Preto',km:1456},{cidade:'Piracicaba',km:1550},{cidade:'Campinas',km:1590},{cidade:'Sorocaba',km:1607},{cidade:'Osasco',km:1653},{cidade:'São Paulo',km:1658},{cidade:'Guarulhos',km:1660},{cidade:'Santo André',km:1662},{cidade:'São Bernardo do Campo',km:1662},{cidade:'São José dos Campos',km:1681},{cidade:'Santos',km:1700}],PR:[{cidade:'Maringá',km:1282},{cidade:'Apucarana',km:1299},{cidade:'Londrina',km:1250},{cidade:'Campo Mourão',km:1310},{cidade:'Cascavel',km:1345},{cidade:'Foz do Iguaçu',km:1426},{cidade:'Guarapuava',km:1487},{cidade:'Ponta Grossa',km:1519},{cidade:'Pato Branco',km:1530},{cidade:'Curitiba',km:1598}],SC:[{cidade:'Chapecó',km:1623},{cidade:'Joinville',km:1697},{cidade:'Blumenau',km:1742},{cidade:'Itajaí',km:1763},{cidade:'Florianópolis',km:1826},{cidade:'Criciúma',km:1893}],RS:[{cidade:'Santa Maria',km:1879},{cidade:'Caxias do Sul',km:1887},{cidade:'Novo Hamburgo',km:1947},{cidade:'Canoas',km:1970},{cidade:'Porto Alegre',km:1982},{cidade:'Pelotas',km:2127}],MG:[{cidade:'Uberlândia',km:1030},{cidade:'Uberaba',km:1103},{cidade:'Montes Claros',km:1435},{cidade:'Belo Horizonte',km:1485},{cidade:'Ipatinga',km:1609},{cidade:'Juiz de Fora',km:1613},{cidade:'Governador Valadares',km:1652}],RJ:[{cidade:'Volta Redonda',km:1692},{cidade:'Nova Iguaçu',km:1762},{cidade:'Petrópolis',km:1779},{cidade:'Duque de Caxias',km:1765},{cidade:'Niterói',km:1800},{cidade:'Rio de Janeiro',km:1795},{cidade:'Macaé',km:1895},{cidade:'Campos dos Goytacazes',km:1912}],ES:[{cidade:'Cachoeiro de Itapemirim',km:1876},{cidade:'Cariacica',km:1928},{cidade:'Serra',km:1935},{cidade:'Vila Velha',km:1942},{cidade:'Vitória',km:1940}],BA:[{cidade:'Barreiras',km:1427},{cidade:'Vitória da Conquista',km:1881},{cidade:'Eunápolis',km:2013},{cidade:'Porto Seguro',km:2075},{cidade:'Feira de Santana',km:2138},{cidade:'Salvador',km:2172}],TO:[{cidade:'Gurupi',km:1027},{cidade:'Palmas',km:1202},{cidade:'Araguaína',km:1438}],PA:[{cidade:'Parauapebas',km:1642},{cidade:'Marabá',km:1776},{cidade:'Altamira',km:1857},{cidade:'Santarém',km:1895},{cidade:'Belém',km:2265},{cidade:'Ananindeua',km:2268}],AM:[{cidade:'Itacoatiara',km:1912},{cidade:'Parintins',km:1957},{cidade:'Manaus',km:1975}],AC:[{cidade:'Rio Branco',km:1957},{cidade:'Cruzeiro do Sul',km:2688}],AP:[{cidade:'Macapá',km:2317}],RR:[{cidade:'Rorainópolis',km:2463},{cidade:'Boa Vista',km:2715}],DF:[{cidade:'Brasília',km:1005}],AL:[{cidade:'Arapiraca',km:2416},{cidade:'Maceió',km:2515}],CE:[{cidade:'Crato',km:2248},{cidade:'Juazeiro do Norte',km:2259},{cidade:'Sobral',km:2381},{cidade:'Fortaleza',km:2541}],MA:[{cidade:'Imperatriz',km:1693},{cidade:'Timon',km:2140},{cidade:'São Luís',km:2226}],PB:[{cidade:'Campina Grande',km:2580},{cidade:'João Pessoa',km:2690}],PE:[{cidade:'Petrolina',km:2030},{cidade:'Caruaru',km:2538},{cidade:'Recife',km:2665}],PI:[{cidade:'Picos',km:2086},{cidade:'Teresina',km:2097},{cidade:'Parnaíba',km:2350}],RN:[{cidade:'Mossoró',km:2542},{cidade:'Natal',km:2714}],SE:[{cidade:'Aracaju',km:2299}]}},
+  cargaTrib:{icms:{MT_fuba:0.030,MT_outros:0.0425,outros:0.024},fund:{MT_fuba:0.0063,MT_outros:0.0089,outros:0.0067},pisCofins:{fuba:{mineracao:0.0814,ind_cervejeira:0.0814,ind_racao:0.0,varejo:0.0,varejo_sn:0.0,atacado:0.0},outros:{mineracao:0.0814,ind_cervejeira:0.0814,ind_racao:0.0814,varejo:0.0814,varejo_sn:0.0814,atacado:0.0814}},germe:0.1121},
+};
+
+let D=JSON.parse(JSON.stringify(PADRAO));
+let modalAtual=null;
+const DMAP={premissas:'premissas',formacaoPreco:'formacao_preco',precoSA:'preco_sa',estruturaCustos:'estrutura_custos',frete:'frete',cargaTrib:'carga_tributaria'};
+
+
+// ── Login ──────────────────────────────────────────────────────────────────
+const USUARIO_PADRAO = 'diretor';
+const SENHA_PADRAO   = 'belarina2025';
+
+function verificarLogin(){
+  // Verificar se já está logado nesta sessão
+  if(sessionStorage.getItem('belarinavDir')==='1'){
+    mostrarApp();
+  }
+}
+
+window.fazerLogin=function(){
+  const usuario = document.getElementById('loginUsuario').value.trim();
+  const senha   = document.getElementById('loginSenha').value;
+  const erroEl  = document.getElementById('loginErro');
+
+  // Credenciais: usuario fixo, senha pode vir do Firebase (campo senhaDir)
+  const senhaCorreta = D.premissas.senhaDir || SENHA_PADRAO;
+  const usuarioCorreto = D.premissas.usuarioDir || USUARIO_PADRAO;
+
+  if(usuario === usuarioCorreto && senha === senhaCorreta){
+    sessionStorage.setItem('belarinavDir','1');
+    erroEl.classList.remove('visivel');
+    mostrarApp();
+  } else {
+    erroEl.classList.add('visivel');
+    document.getElementById('loginSenha').value='';
+    document.getElementById('loginSenha').focus();
+  }
+};
+
+function mostrarApp(){
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('appContent').style.display='block';
+  document.getElementById('appTabs').style.display='flex';
+  document.querySelectorAll('.page').forEach((p,i)=>{ if(i===0) p.classList.add('ativo'); });
+}
+
+async function carregarFirebase(){
+  const chaves=['premissas','formacaoPreco','precoSA','estruturaCustos','frete','cargaTrib'];
+  const docs=['premissas','formacao_preco','preco_sa','estrutura_custos','frete','carga_tributaria'];
+  try{
+    const snaps=await Promise.all(docs.map(d=>getDoc(doc(db,'cadastros',d))));
+    snaps.forEach((s,i)=>{if(s.exists())D[chaves[i]]={...PADRAO[chaves[i]],...s.data()};});
+  }catch(e){console.log('Firebase offline');}
+}
+
+async function salvarFirebase(chave,dados){
+  await setDoc(doc(db,'cadastros',DMAP[chave]),dados,{merge:true});
+  D[chave]={...D[chave],...dados};
+}
+
+function montarProdutos(){
+  const s=document.getElementById('produto');s.innerHTML='';
+  Object.entries(D.precoSA).forEach(([v,{label}])=>{const o=document.createElement('option');o.value=v;o.textContent=label;if(v==='fuba')o.selected=true;s.appendChild(o);});
+}
+function montarEmbalagens(){
+  const s=document.getElementById('embalagem');s.innerHTML='';
+  Object.entries(D.estruturaCustos).forEach(([v,{label}])=>{const o=document.createElement('option');o.value=v;o.textContent=label;s.appendChild(o);});
+}
+
+window.filtrarCidades=function(){
+  const uf=document.getElementById('uf').value;
+  const s=document.getElementById('cidade');s.innerHTML='';
+  (D.frete.distancias[uf]||[]).forEach(({cidade})=>{const o=document.createElement('option');o.value=cidade;o.textContent=cidade;s.appendChild(o);});
+  limparResultado();
+};
+
+window.limparResultado=function(){
+  document.getElementById('resultCard').classList.remove('visivel');
+  document.getElementById('breakdown').classList.remove('visivel');
+};
+
+const fmt=v=>'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtPct=v=>(v*100).toFixed(2)+'%';
+const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+
+window.calcular=function(){
+  const produto=document.getElementById('produto').value;
+  const embalagem=document.getElementById('embalagem').value;
+  const cliente=document.getElementById('cliente').value;
+  const uf=document.getElementById('uf').value;
+  const cidade=document.getElementById('cidade').value;
+  const pedagio=parseFloat(document.getElementById('pedagio').value)||0;
+  const capacidade=parseFloat(document.getElementById('capacidade').value)||35;
+  const prazo=parseFloat(document.getElementById('prazo').value)||0;
+
+  const cidadeData=(D.frete.distancias[uf]||[]).find(c=>c.cidade===cidade);
+  if(!cidadeData)return;
+
+  const km=cidadeData.km;
+  const freteLiq=km*D.frete.antt+D.frete.cargaDescarga;
+  const margFrete=freteLiq*D.frete.margem;
+  const icmsFrete=(freteLiq+margFrete)*D.frete.icmsFrete;
+  const freteTotal=freteLiq+margFrete+icmsFrete+pedagio;
+  const freteTon=freteTotal/capacidade;
+
+  const prodData=D.precoSA[produto];
+  const fobProd=prodData.fobFixo!==null?prodData.fobFixo:D.formacaoPreco.custoMilhoBase*prodData.fator;
+  const custoProd=D.estruturaCustos[embalagem]?.custo||0;
+  const netFob=fobProd+custoProd;
+
+  const taxaAnual=D.premissas.cdi*D.premissas.custoCaptacao;
+  const taxaMensal=Math.pow(1+taxaAnual,1/12)-1;
+  const custoFin=Math.pow(1+taxaMensal/30,prazo)-1;
+
+  let trib;
+  if(produto==='germe'){
+    trib={icms:0.024,fund:0.0067,pis:0.0814,total:D.cargaTrib.germe};
+  }else{
+    let icms,fund;
+    if(uf==='MT'){icms=produto==='fuba'?D.cargaTrib.icms.MT_fuba:D.cargaTrib.icms.MT_outros;fund=produto==='fuba'?D.cargaTrib.fund.MT_fuba:D.cargaTrib.fund.MT_outros;}
+    else{icms=D.cargaTrib.icms.outros;fund=D.cargaTrib.fund.outros;}
+    const pis=D.cargaTrib.pisCofins[produto==='fuba'?'fuba':'outros'][cliente]||0;
+    trib={icms,fund,pis,total:icms+fund+pis};
+  }
+
+  const MARGEM=0.10;
+  const precoFinal=((netFob+freteTon)/(1-custoFin-MARGEM))/(1-trib.total);
+  const margem=precoFinal*MARGEM;
+
+  document.getElementById('rValor').textContent=fmt(precoFinal);
+  document.getElementById('rSub').textContent=`${prodData.label} · ${D.estruturaCustos[embalagem]?.label}\n${cidade}/${uf} · ${capacidade}t · ${prazo} dias`;
+  document.getElementById('resultCard').classList.add('visivel');
+
+  set('bCusto',fmt(custoProd));set('bFob',fmt(fobProd));set('bNetFob',fmt(netFob));
+  set('bKm',km.toLocaleString('pt-BR')+' km');set('bFreteLiq',fmt(freteLiq));
+  set('bMargFrete',fmt(margFrete));set('bIcmsFrete',fmt(icmsFrete));
+  set('bPedagio',fmt(pedagio));set('bFrete',fmt(freteTotal));set('bFreteTon',fmt(freteTon));
+  set('bFin',fmtPct(custoFin)+' ('+prazo+'d)');set('bTrib',fmtPct(trib.total));
+  document.getElementById('tribSub').innerHTML=
+    `<span class="trib-item">ICMS <span>${fmtPct(trib.icms)}</span></span>`+
+    `<span class="trib-item">FUNDEIC <span>${fmtPct(trib.fund)}</span></span>`+
+    `<span class="trib-item">PIS/COFINS <span>${fmtPct(trib.pis)}</span></span>`;
+  set('bMargem',fmt(margem));set('bTotal',fmt(precoFinal));
+  document.getElementById('breakdown').classList.add('visivel');
+  document.getElementById('resultCard').scrollIntoView({behavior:'smooth'});
+};
+
+window.mudarTab=function(tab){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('ativo',['precificador','cadastros'][i]===tab));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('ativo'));
+  document.getElementById('page-'+tab).classList.add('ativo');
+};
+
+const CLABEL={mineracao:'Mineração',ind_cervejeira:'Ind. Cervejeira',ind_racao:'Ind. Ração Animal',varejo:'Varejo',varejo_sn:'Varejo Simples Nacional',atacado:'Atacado/Revenda/CD'};
+
+function c(label,id,val,pre,suf,dica){
+  return`<div class="c-edit"><div class="c-label">${label}</div>${dica?`<div class="c-dica">${dica}</div>`:''}<div class="c-row">${pre?`<span class="c-afx pre">${pre}</span>`:''}<input class="c-inp${pre?' pre':''}${suf?' suf':''}" id="${id}" value="${val}" inputmode="decimal">${suf?`<span class="c-afx suf">${suf}</span>`:''}</div></div>`;
+}
+function sec(t){return`<div class="sec-label">${t}</div>`;}
+
+function gerarForm(tipo){
+  let h='';
+  if(tipo==='premissas'){
+    h+=c('CDI (% ao ano)','p_cdi',(D.premissas.cdi*100).toFixed(4),'','%','Ex: 14.4 para 14,40%');
+    h+=c('Custo de Captação (% do CDI)','p_cap',(D.premissas.custoCaptacao*100).toFixed(2),'','%','Ex: 110 para 110% do CDI');
+    h+=c('Senha do App','p_senha',D.premissas.senha,'','','Senha para acessar cadastros no celular');
+    h+=sec('Acesso Web — Diretor');
+    h+=c('Usuário (login web)','p_udir',D.premissas.usuarioDir||'diretor','','','Login da tela web do diretor');
+    h+=c('Senha (login web)','p_sdir',D.premissas.senhaDir||'belarina2025','','','Senha da tela web do diretor');
+  }else if(tipo==='formacaoPreco'){
+    h+=c('Custo Base Milho Degerminado (R$/ton)','fp_c',D.formacaoPreco.custoMilhoBase.toFixed(4),'R$','','Base para calcular todos os derivados');
+  }else if(tipo==='precoSA'){
+    Object.entries(D.precoSA).forEach(([k,v])=>{
+      h+=v.fobFixo!==null?c(v.label,'psa_'+k,v.fobFixo,'R$','(FOB fixo)',''):c(v.label,'psa_'+k,(v.fator*100).toFixed(2),'','% do custo base','');
+    });
+  }else if(tipo==='estruturaCustos'){
+    Object.entries(D.estruturaCustos).forEach(([k,v])=>{h+=c(v.label,'ec_'+k,v.custo.toFixed(3),'R$','/ton','');});
+  }else if(tipo==='frete'){
+    h+=c('Valor ANTT por KM','fr_antt',D.frete.antt,'R$','/km','');
+    h+=c('Carga e Descarga','fr_cd',D.frete.cargaDescarga,'R$','','Valor fixo por viagem');
+    h+=c('Margem da Transportadora','fr_mg',(D.frete.margem*100).toFixed(1),'','%','ICMS do frete fixo em 12%');
+    h+=sec('Distâncias por Cidade (km de Cuiabá)');
+    const ufs=Object.keys(D.frete.distancias).sort();
+    h+=`<select id="fr_uf" onchange="renderKm()" style="border:1.5px solid var(--borda);border-radius:9px;padding:9px 12px;font-size:14px;background:#f7f8fc;width:100%">`;
+    ufs.forEach(u=>{h+=`<option value="${u}"${u==='PR'?' selected':''}>${u}</option>`;});
+    h+=`</select><div id="fr_km_list"></div>`;
+  }else if(tipo==='cargaTrib'){
+    h+=sec('ICMS Outorgado (%)');
+    h+=c('MT — Fubá','ct_i_mf',(D.cargaTrib.icms.MT_fuba*100).toFixed(3),'','%','');
+    h+=c('MT — Demais produtos','ct_i_mo',(D.cargaTrib.icms.MT_outros*100).toFixed(3),'','%','');
+    h+=c('Demais UFs','ct_i_o',(D.cargaTrib.icms.outros*100).toFixed(3),'','%','');
+    h+=sec('FUNDEIC / FUNDED (%)');
+    h+=c('MT — Fubá','ct_f_mf',(D.cargaTrib.fund.MT_fuba*100).toFixed(3),'','%','');
+    h+=c('MT — Demais','ct_f_mo',(D.cargaTrib.fund.MT_outros*100).toFixed(3),'','%','');
+    h+=c('Demais UFs','ct_f_o',(D.cargaTrib.fund.outros*100).toFixed(3),'','%','');
+    h+=sec('PIS/COFINS — Fubá (%)');
+    Object.entries(D.cargaTrib.pisCofins.fuba).forEach(([k,v])=>{h+=c(CLABEL[k]||k,'ct_pf_'+k,(v*100).toFixed(3),'','%','');});
+    h+=sec('PIS/COFINS — Demais Produtos (%)');
+    Object.entries(D.cargaTrib.pisCofins.outros).forEach(([k,v])=>{h+=c(CLABEL[k]||k,'ct_po_'+k,(v*100).toFixed(3),'','%','');});
+    h+=sec('Gérmen de Milho');
+    h+=c('Carga Tributária Total','ct_germe',(D.cargaTrib.germe*100).toFixed(3),'','%','');
+  }
+  h+=`<button class="btn-salvar" onclick="salvarModal()">💾 Salvar no Firebase</button>`;
+  return h;
+}
+
+window.renderKm=function(){
+  const uf=document.getElementById('fr_uf')?.value;
+  const div=document.getElementById('fr_km_list');
+  if(!uf||!div)return;
+  div.innerHTML='';
+  (D.frete.distancias[uf]||[]).forEach((c,i)=>{
+    const l=c.km*D.frete.antt+D.frete.cargaDescarga,m=l*D.frete.margem,ic=(l+m)*D.frete.icmsFrete,t=l+m+ic;
+    div.innerHTML+=`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f0f2f6"><span style="flex:2;font-size:13px">${c.cidade}</span><input id="km_${i}" value="${c.km}" style="flex:1;border:1.5px solid var(--borda);border-radius:7px;padding:6px 8px;font-size:13px;text-align:center" inputmode="numeric"><span style="flex:1.5;font-size:11px;color:var(--muted);text-align:right">R$ ${t.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>`;
+  });
+};
+
+window.abrirModal=function(tipo){
+  modalAtual=tipo;
+  const titulos={premissas:'Premissas',formacaoPreco:'Formação de Preço',precoSA:'Preço S.A. (Derivação)',estruturaCustos:'Estrutura de Custos',frete:'Frete',cargaTrib:'Carga Tributária'};
+  document.getElementById('modalTitulo').textContent=titulos[tipo];
+  document.getElementById('modalBody').innerHTML=gerarForm(tipo);
+  document.getElementById('modalOverlay').classList.add('visivel');
+  if(tipo==='frete')setTimeout(renderKm,50);
+};
+
+window.fecharModal=function(){document.getElementById('modalOverlay').classList.remove('visivel');modalAtual=null;};
+window.fecharSeFora=function(e){if(e.target===document.getElementById('modalOverlay'))fecharModal();};
+
+const gv=(id)=>{const el=document.getElementById(id);return el?parseFloat(el.value)||0:0;};
+const gs=(id)=>{const el=document.getElementById(id);return el?el.value:'';};
+
+window.salvarModal=async function(){
+  const tipo=modalAtual;let novos={};
+  if(tipo==='premissas'){novos={cdi:gv('p_cdi')/100,custoCaptacao:gv('p_cap')/100,senha:gs('p_senha'),usuarioDir:gs('p_udir'),senhaDir:gs('p_sdir')};}
+  else if(tipo==='formacaoPreco'){novos={custoMilhoBase:gv('fp_c')};}
+  else if(tipo==='precoSA'){
+    novos=JSON.parse(JSON.stringify(D.precoSA));
+    Object.entries(novos).forEach(([k,v])=>{const val=gv('psa_'+k);if(v.fobFixo!==null)novos[k].fobFixo=val;else novos[k].fator=val/100;});
+  }else if(tipo==='estruturaCustos'){
+    novos=JSON.parse(JSON.stringify(D.estruturaCustos));
+    Object.keys(novos).forEach(k=>{novos[k].custo=gv('ec_'+k);});
+  }else if(tipo==='frete'){
+    const uf=document.getElementById('fr_uf')?.value;
+    const dist=JSON.parse(JSON.stringify(D.frete.distancias));
+    if(uf&&dist[uf])dist[uf]=dist[uf].map((c,i)=>({...c,km:parseFloat(document.getElementById('km_'+i)?.value)||c.km}));
+    novos={antt:gv('fr_antt'),cargaDescarga:gv('fr_cd'),margem:gv('fr_mg')/100,icmsFrete:0.12,distancias:dist};
+  }else if(tipo==='cargaTrib'){
+    novos={
+      icms:{MT_fuba:gv('ct_i_mf')/100,MT_outros:gv('ct_i_mo')/100,outros:gv('ct_i_o')/100},
+      fund:{MT_fuba:gv('ct_f_mf')/100,MT_outros:gv('ct_f_mo')/100,outros:gv('ct_f_o')/100},
+      pisCofins:{
+        fuba:Object.keys(D.cargaTrib.pisCofins.fuba).reduce((a,k)=>{a[k]=gv('ct_pf_'+k)/100;return a;},{}),
+        outros:Object.keys(D.cargaTrib.pisCofins.outros).reduce((a,k)=>{a[k]=gv('ct_po_'+k)/100;return a;},{}),
+      },
+      germe:gv('ct_germe')/100,
+    };
+  }
+  try{
+    await salvarFirebase(tipo,novos);
+    fecharModal();
+    if(['precoSA','estruturaCustos','frete'].includes(tipo)){montarProdutos();montarEmbalagens();filtrarCidades();}
+    alert('✅ Salvo com sucesso!');
+  }catch(e){alert('❌ Erro ao salvar. Verifique a conexão.');}
+};
+
+// Inicializar
+(async()=>{
+  await carregarFirebase();
+  montarProdutos();montarEmbalagens();filtrarCidades();
+  document.getElementById('loading-prec').style.display='none';
+  document.getElementById('form-prec').style.display='block';
+  verificarLogin();
+})();
+</script>
+</body>
+</html>
