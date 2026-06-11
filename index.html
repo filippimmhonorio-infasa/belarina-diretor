@@ -100,6 +100,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-login{background:var(--dourado);color:var(--azul);border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:800;width:100%;cursor:pointer;}
 .btn-login:active{background:var(--dourado2);}
 .login-rodape{color:rgba(255,255,255,.4);font-size:11px;text-align:center;margin-top:8px;}
+
+.frete-tipo{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.btn-tipo{border:1.5px solid var(--borda);border-radius:10px;padding:12px;text-align:center;cursor:pointer;background:#f7f8fc;}
+.btn-tipo.ativo{border-color:var(--azul);background:var(--azul);}
+.btn-tipo-label{font-size:16px;font-weight:800;color:var(--muted);}
+.btn-tipo.ativo .btn-tipo-label{color:var(--dourado);}
+.btn-tipo-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+.btn-tipo.ativo .btn-tipo-desc{color:rgba(255,255,255,.7);}
 </style>
 </head>
 <body>
@@ -162,6 +170,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         </div>
       </div>
       <div class="card">
+        <div class="card-titulo">Tipo de Frete</div>
+        <div class="card-body">
+          <div class="frete-tipo">
+            <div class="btn-tipo ativo" id="btnCIF" onclick="selecionarFrete('CIF')">
+              <div class="btn-tipo-label">CIF</div>
+              <div class="btn-tipo-desc">Frete por nossa conta</div>
+            </div>
+            <div class="btn-tipo" id="btnFOB" onclick="selecionarFrete('FOB')">
+              <div class="btn-tipo-label">FOB</div>
+              <div class="btn-tipo-desc">Frete por conta do cliente</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
         <div class="card-titulo">Destino &amp; Frete</div>
         <div class="card-body">
           <div class="row2">
@@ -172,7 +196,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
             </div>
             <div class="field"><label>Cidade</label><select id="cidade" onchange="limparResultado()"></select></div>
           </div>
-          <div class="row2">
+          <div class="row2" id="rowPedagio">
             <div class="field"><label>Pedágio (R$)</label><input type="number" id="pedagio" value="1569.60" step="10"></div>
             <div class="field"><label>Capacidade (ton)</label><input type="number" id="capacidade" value="35" step="1" min="1"></div>
           </div>
@@ -320,6 +344,16 @@ function montarEmbalagens(){
   Object.entries(D.estruturaCustos).forEach(([v,{label}])=>{const o=document.createElement('option');o.value=v;o.textContent=label;s.appendChild(o);});
 }
 
+
+let tipoFrete='CIF';
+window.selecionarFrete=function(tipo){
+  tipoFrete=tipo;
+  document.getElementById('btnCIF').classList.toggle('ativo',tipo==='CIF');
+  document.getElementById('btnFOB').classList.toggle('ativo',tipo==='FOB');
+  document.getElementById('rowPedagio').style.display=tipo==='CIF'?'':'none';
+  limparResultado();
+};
+
 window.filtrarCidades=function(){
   const uf=document.getElementById('uf').value;
   const s=document.getElementById('cidade');s.innerHTML='';
@@ -350,11 +384,12 @@ window.calcular=function(){
   if(!cidadeData)return;
 
   const km=cidadeData.km;
-  const freteLiq=km*D.frete.antt+D.frete.cargaDescarga;
-  const margFrete=freteLiq*D.frete.margem;
-  const icmsFrete=(freteLiq+margFrete)*D.frete.icmsFrete;
-  const freteTotal=freteLiq+margFrete+icmsFrete+pedagio;
-  const freteTon=freteTotal/capacidade;
+  const isFOB=tipoFrete==='FOB';
+  const freteLiq=isFOB?0:km*D.frete.antt+D.frete.cargaDescarga;
+  const margFrete=isFOB?0:freteLiq*D.frete.margem;
+  const icmsFrete=isFOB?0:(freteLiq+margFrete)*D.frete.icmsFrete;
+  const freteTotal=isFOB?0:freteLiq+margFrete+icmsFrete+pedagio;
+  const freteTon=isFOB?0:freteTotal/capacidade;
 
   const prodData=D.precoSA[produto];
   const fobProd=prodData.fobFixo!==null?prodData.fobFixo:D.formacaoPreco.custoMilhoBase*prodData.fator;
