@@ -385,10 +385,11 @@ window.calcular=function(){
 
   const km=cidadeData.km;
   const isFOB=tipoFrete==='FOB';
+  const pedagioFinal=isFOB?0:pedagio;
   const freteLiq=isFOB?0:km*D.frete.antt+D.frete.cargaDescarga;
   const margFrete=isFOB?0:freteLiq*D.frete.margem;
   const icmsFrete=isFOB?0:(freteLiq+margFrete)*D.frete.icmsFrete;
-  const freteTotal=isFOB?0:freteLiq+margFrete+icmsFrete+pedagio;
+  const freteTotal=isFOB?0:freteLiq+margFrete+icmsFrete+pedagioFinal;
   const freteTon=isFOB?0:freteTotal/capacidade;
 
   const prodData=D.precoSA[produto];
@@ -422,7 +423,7 @@ window.calcular=function(){
   set('bCusto',fmt(custoProd));set('bFob',fmt(fobProd));set('bNetFob',fmt(netFob));
   set('bKm',km.toLocaleString('pt-BR')+' km');set('bFreteLiq',fmt(freteLiq));
   set('bMargFrete',fmt(margFrete));set('bIcmsFrete',fmt(icmsFrete));
-  set('bPedagio',fmt(pedagio));set('bFrete',fmt(freteTotal));set('bFreteTon',fmt(freteTon));
+  set('bPedagio',fmt(pedagioFinal));set('bFrete',fmt(freteTotal));set('bFreteTon',fmt(freteTon));
   set('bFin',fmtPct(custoFin)+' ('+prazo+'d)');set('bTrib',fmtPct(trib.total));
   document.getElementById('tribSub').innerHTML=
     `<span class="trib-item">ICMS <span>${fmtPct(trib.icms)}</span></span>`+
