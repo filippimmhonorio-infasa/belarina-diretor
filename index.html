@@ -483,7 +483,10 @@ set('bFrete',fmt(freteTotal));set('bFreteTon',fmt(freteTon));
   document.getElementById('resultCard').scrollIntoView({behavior:'smooth'});
 };
 
-window.mudarTab=function(tab){ return; //
+
+
+
+window.mudarTab=function(tab){
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('ativo',['precificador','cadastros'][i]===tab));
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('ativo'));
   document.getElementById('page-'+tab).classList.add('ativo');
@@ -550,156 +553,6 @@ window.renderKm=function(){
   (D.frete.distancias[uf]||[]).forEach((c,i)=>{
     const l=c.km*D.frete.antt+D.frete.cargaDescarga,m=l*D.frete.margem,ic=(l+m)*D.frete.icmsFrete,t=l+m+ic;
     div.innerHTML+=`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f0f2f6"><span style="flex:2;font-size:13px">${c.cidade}</span><input id="km_${i}" value="${c.km}" style="flex:1;border:1.5px solid var(--borda);border-radius:7px;padding:6px 8px;font-size:13px;text-align:center" inputmode="numeric"><span style="flex:1.5;font-size:11px;color:var(--muted);text-align:right">R$ ${t.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>`;
-  });
-};
-
-window.abrirModal=function(tipo){
-  modalAtual=tipo;
-  const titulos={premissas:'Premissas',formacaoPreco:'Formação de Preço',precoSA:'Preço S.A. (Derivação)',estruturaCustos:'Estrutura de Custos',frete:'Frete',cargaTrib:'Carga Tributária'};
-  document.getElementById('modalTitulo').textContent=titulos[tipo];
-  document.getElementById('modalBody').innerHTML=gerarForm(tipo);
-  document.getElementById('modalOverlay').classList.add('visivel');
-  if(tipo==='frete')setTimeout(renderKm,50);
-};
-
-window.fecharModal=function(){document.getElementById('modalOverlay').classList.remove('visivel');modalAtual=null;};
-window.fecharSeFora=function(e){if(e.target===document.getElementById('modalOverlay'))fecharModal();};
-
-const gv=(id)=>{const el=document.getElementById(id);return el?parseFloat(el.value)||0:0;};
-const gs=(id)=>{const el=document.getElementById(id);return el?el.value:'';};
-
-window.salvarModal=async function(){
-  const tipo=modalAtual;let novos={};
-  if(tipo==='premissas'){novos={cdi:gv('p_cdi')/100,custoCaptacao:gv('p_cap')/100,senha:gs('p_senha'),usuarioDir:gs('p_udir'),senhaDir:gs('p_sdir')};}
-  else if(tipo==='formacaoPreco'){novos={custoMilhoBase:gv('fp_c')};}
-  else if(tipo==='precoSA'){
-    novos=JSON.parse(JSON.stringify(D.precoSA));
-    Object.entries(novos).forEach(([k,v])=>{const val=gv('psa_'+k);if(v.fobFixo!==null)novos[k].fobFixo=val;else novos[k].fator=val/100;});
-  }else if(tipo==='estruturaCustos'){
-    novos=JSON.parse(JSON.stringify(D.estruturaCustos));
-    Object.keys(novos).forEach(k=>{novos[k].custo=gv('ec_'+k);});
-  }else if(tipo==='frete'){
-    const uf=document.getElementById('fr_uf')?.value;
-    const dist=JSON.parse(JSON.stringify(D.frete.distancias));
-    if(uf&&dist[uf])dist[uf]=dist[uf].map((c,i)=>({...c,km:parseFloat(document.getElementById('km_'+i)?.value)||c.km}));
-    novos={antt:gv('fr_antt'),cargaDescarga:gv('fr_cd'),margem:gv('fr_mg')/100,icmsFrete:0.12,distancias:dist};
-  }else if(tipo==='cargaTrib'){
-    novos={
-      icms:{MT_fuba:gv('ct_i_mf')/100,MT_outros:gv('ct_i_mo')/100,outros:gv('ct_i_o')/100},
-      fund:{MT_fuba:gv('ct_f_mf')/100,MT_outros:gv('ct_f_mo')/100,outros:gv('ct_f_o')/100},
-      pisCofins:{
-        fuba:Object.keys(D.cargaTrib.pisCofins.fuba).reduce((a,k)=>{a[k]=gv('ct_pf_'+k)/100;return a;},{}),
-        outros:Object.keys(D.cargaTrib.pisCofins.outros).reduce((a,k)=>{a[k]=gv('ct_po_'+k)/100;return a;},{}),
-      },
-      germe:gv('ct_germe')/100,
-    };
-  }
-  try{
-    await salvarFirebase(tipo,novos);
-    fecharModal();
-    if(['precoSA','estruturaCustos','frete'].includes(tipo)){montarProdutos();montarEmbalagens();filtrarCidades();}
-    alert('✅ Salvo com sucesso!');
-  }catch(e){alert('❌ Erro ao salvar. Verifique a conexão.');}
-};
-
-
-// ── Tabs ───────────────────────────────────────────────────────────────────
-window.mudarTab=function(tab){
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('ativo',['precificador','cadastros'][i]===tab));
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('ativo'));
-  document.getElementById('page-'+tab).classList.add('ativo');
-};
-
-
-function c(label,id,val,pre,suf,dica){
-  return`<div class="c-edit"><div class="c-label">${label}</div>${dica?`<div class="c-dica">${dica}</div>`:''}<div class="c-row">${pre?`<span class="c-afx pre">${pre}</span>`:''}<input class="c-inp${pre?' pre':''}${suf?' suf':''}" id="${id}" value="${val}" inputmode="decimal">${suf?`<span class="c-afx suf">${suf}</span>`:''}</div></div>`;
-}
-function sec(t){return`<div class="sec-label">${t}</div>`;}
-
-function gerarForm(tipo){
-  let h='';
-  if(tipo==='premissas'){
-    h+=c('CDI (% ao ano)','p_cdi',(D.premissas.cdi*100).toFixed(4),'','%','Ex: 14.4 para 14,40%');
-    h+=c('Custo de Captação (% do CDI)','p_cap',(D.premissas.custoCaptacao*100).toFixed(2),'','%','Ex: 110 para 110% do CDI');
-    h+=c('Comissão (%)','p_com',((D.premissas.comissao||0.02)*100).toFixed(2),'','%','Percentual sobre o preço final');
-    h+=c('Senha do App','p_senha',D.premissas.senha,'','','Senha para acessar cadastros no celular');
-    h+=sec('Acesso Web — Diretor');
-    h+=c('Usuário','p_udir',D.premissas.usuarioDir||'diretor','','','');
-    h+=c('Senha','p_sdir',D.premissas.senhaDir||'belarina2025','','','');
-    h+=sec('Acesso Web — Comercial');
-    h+=c('Usuário','p_ucom',D.premissas.usuarioCom||'comercial','','','');
-    h+=c('Senha','p_scom',D.premissas.senhaCom||'belarina@com','','','');
-  }else if(tipo==='formacaoPreco'){
-    h+=c('Custo Base Milho Degerminado (R$/ton)','fp_c',D.formacaoPreco.custoMilhoBase.toFixed(4),'R$','','Base para calcular todos os derivados');
-  }else if(tipo==='precoSA'){
-    Object.entries(D.precoSA).forEach(([k,v])=>{
-      h+=v.fobFixo!==null?c(v.label,'psa_'+k,v.fobFixo,'R$','(FOB fixo)',''):c(v.label,'psa_'+k,(v.fator*100).toFixed(2),'','% do custo base','');
-    });
-  }else if(tipo==='estruturaCustos'){
-    Object.entries(D.estruturaCustos).forEach(([k,v])=>{h+=c(v.label,'ec_'+k,v.custo.toFixed(3),'R$','/ton','');});
-  }else if(tipo==='frete'){
-    h+=c('Valor ANTT por KM','fr_antt',D.frete.antt,'R$','/km','');
-    h+=c('Carga e Descarga','fr_cd',D.frete.cargaDescarga,'R$','','Valor fixo por viagem');
-    h+=c('Margem da Transportadora','fr_mg',(D.frete.margem*100).toFixed(1),'','%','ICMS do frete fixo em 12%');
-    h+=sec('Distâncias por Cidade (km de Cuiabá)');
-    const ufs=Object.keys(D.frete.distancias).sort();
-    h+=`<select id="fr_uf" onchange="renderKm()" style="border:1.5px solid var(--borda);border-radius:9px;padding:9px 12px;font-size:14px;background:#f7f8fc;width:100%">`;
-    ufs.forEach(u=>{h+=`<option value="${u}"${u==='PR'?' selected':''}>${u}</option>`;});
-    h+=`</select><div id="fr_km_list"></div>`;
-    h+=`<div style="margin-top:12px;padding:12px;background:#f0f5fc;border-radius:10px;border:1.5px dashed var(--azul)">
-      <div style="font-size:11px;font-weight:700;color:var(--azul);margin-bottom:8px">+ ADICIONAR NOVA CIDADE</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-        <div><div style="font-size:11px;font-weight:600;color:var(--azul);margin-bottom:3px">Nome da Cidade</div>
-          <input id="nova_cidade" placeholder="Ex: Foz do Iguaçu" style="border:1.5px solid var(--borda);border-radius:8px;padding:8px 10px;font-size:13px;width:100%;outline:none"></div>
-        <div><div style="font-size:11px;font-weight:600;color:var(--azul);margin-bottom:3px">KM de Cuiabá</div>
-          <input id="nova_km" placeholder="Ex: 1426" inputmode="numeric" style="border:1.5px solid var(--borda);border-radius:8px;padding:8px 10px;font-size:13px;width:100%;outline:none"></div>
-      </div>
-      <button onclick="adicionarCidade()" style="background:var(--azul);color:var(--dourado);border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;width:100%;cursor:pointer">✓ Adicionar à lista</button>
-    </div>`;
-  }else if(tipo==='cargaTrib'){
-    h+=sec('ICMS Outorgado (%)');
-    h+=c('MT — Fubá','ct_i_mf',(D.cargaTrib.icms.MT_fuba*100).toFixed(3),'','%','');
-    h+=c('MT — Demais produtos','ct_i_mo',(D.cargaTrib.icms.MT_outros*100).toFixed(3),'','%','');
-    h+=c('Demais UFs','ct_i_o',(D.cargaTrib.icms.outros*100).toFixed(3),'','%','');
-    h+=sec('FUNDEIC / FUNDED (%)');
-    h+=c('MT — Fubá','ct_f_mf',(D.cargaTrib.fund.MT_fuba*100).toFixed(3),'','%','');
-    h+=c('MT — Demais','ct_f_mo',(D.cargaTrib.fund.MT_outros*100).toFixed(3),'','%','');
-    h+=c('Demais UFs','ct_f_o',(D.cargaTrib.fund.outros*100).toFixed(3),'','%','');
-    h+=sec('PIS/COFINS — Fubá (%)');
-    Object.entries(D.cargaTrib.pisCofins.fuba).forEach(([k,v])=>{h+=c(CLABEL[k]||k,'ct_pf_'+k,(v*100).toFixed(3),'','%','');});
-    h+=sec('PIS/COFINS — Demais Produtos (%)');
-    Object.entries(D.cargaTrib.pisCofins.outros).forEach(([k,v])=>{h+=c(CLABEL[k]||k,'ct_po_'+k,(v*100).toFixed(3),'','%','');});
-    h+=sec('Gérmen de Milho');
-    h+=c('Carga Tributária Total','ct_germe',(D.cargaTrib.germe*100).toFixed(3),'','%','');
-  }
-  h+=`<button class="btn-salvar" onclick="salvarModal()">💾 Salvar no Firebase</button>`;
-  return h;
-}
-
-window.adicionarCidade=function(){
-  const uf=document.getElementById('fr_uf')?.value;
-  const cidade=(document.getElementById('nova_cidade')?.value||'').trim();
-  const km=parseFloat(document.getElementById('nova_km')?.value||'0');
-  if(!cidade||!km){alert('Informe o nome da cidade e a distância em km.');return;}
-  if(!D.frete.distancias[uf])D.frete.distancias[uf]=[];
-  const existe=D.frete.distancias[uf].find(x=>x.cidade.toLowerCase()===cidade.toLowerCase());
-  if(existe){alert('Esta cidade já está cadastrada para esta UF.');return;}
-  D.frete.distancias[uf].push({cidade,km});
-  D.frete.distancias[uf].sort((a,b)=>a.km-b.km);
-  document.getElementById('nova_cidade').value='';
-  document.getElementById('nova_km').value='';
-  renderKm();
-  alert('Cidade adicionada! Clique em Salvar no Firebase para confirmar.');
-};
-
-window.renderKm=function(){
-  const uf=document.getElementById('fr_uf')?.value;
-  const div=document.getElementById('fr_km_list');
-  if(!uf||!div)return;
-  div.innerHTML='';
-  (D.frete.distancias[uf]||[]).forEach((ct,i)=>{
-    const l=ct.km*D.frete.antt+D.frete.cargaDescarga,m=l*D.frete.margem,ic=(l+m)*D.frete.icmsFrete,t=l+m+ic;
-    div.innerHTML+=`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f0f2f6"><span style="flex:2;font-size:13px">${ct.cidade}</span><input id="km_${i}" value="${ct.km}" style="flex:1;border:1.5px solid var(--borda);border-radius:7px;padding:6px 8px;font-size:13px;text-align:center" inputmode="numeric"><span style="flex:1.5;font-size:11px;color:var(--muted);text-align:right">R$ ${t.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>`;
   });
 };
 
