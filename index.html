@@ -326,7 +326,7 @@ const DMAP={premissas:'premissas',formacaoPreco:'formacao_preco',precoSA:'preco_
 const USUARIO_PADRAO = 'diretor';
 const SENHA_PADRAO   = 'belarina2025';
 
-function verificarLogin(){
+window.verificarLogin(){
   // Verificar se já está logado nesta sessão
   if(sessionStorage.getItem('belarinavDir')==='1'){
     mostrarApp();
@@ -353,7 +353,7 @@ window.fazerLogin=function(){
   }
 };
 
-function mostrarApp(){
+window.mostrarApp(){
   document.getElementById('loginPage').style.display='none';
   document.getElementById('appContent').style.display='block';
   if(document.getElementById('appTabs'))document.getElementById('appTabs').style.display='flex';
@@ -610,7 +610,6 @@ window.mudarTab=function(tab){
   document.getElementById('page-'+tab).classList.add('ativo');
 };
 
-const CLABEL={mineracao:'Mineração',ind_cervejeira:'Ind. Cervejeira',ind_racao:'Ind. Ração Animal',varejo:'Varejo',varejo_sn:'Varejo Simples Nacional',atacado:'Atacado/Revenda/CD'};
 
 function c(label,id,val,pre,suf,dica){
   return`<div class="c-edit"><div class="c-label">${label}</div>${dica?`<div class="c-dica">${dica}</div>`:''}<div class="c-row">${pre?`<span class="c-afx pre">${pre}</span>`:''}<input class="c-inp${pre?' pre':''}${suf?' suf':''}" id="${id}" value="${val}" inputmode="decimal">${suf?`<span class="c-afx suf">${suf}</span>`:''}</div></div>`;
