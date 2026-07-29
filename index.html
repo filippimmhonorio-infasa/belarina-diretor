@@ -756,11 +756,16 @@ window.salvarModal=async function(){
 let modalAtual=null;
 // Inicializar
 (async()=>{
-  await carregarFirebase();
+  // Mostrar app imediatamente com dados padrão
   montarProdutos();montarEmbalagens();filtrarCidades();
   document.getElementById('loading-prec').style.display='none';
   document.getElementById('form-prec').style.display='block';
   verificarLogin();
+  // Atualizar com dados do Firebase em segundo plano
+  try {
+    await carregarFirebase();
+    montarProdutos();montarEmbalagens();filtrarCidades();
+  } catch(e) { console.log('Firebase indisponível, usando padrão'); }
 })();
 </script>
 </body>
