@@ -108,11 +108,43 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-tipo.ativo .btn-tipo-label{color:var(--dourado);}
 .btn-tipo-desc{font-size:11px;color:var(--muted);margin-top:2px;}
 .btn-tipo.ativo .btn-tipo-desc{color:rgba(255,255,255,.7);}
+.btn-cad{background:rgba(255,255,255,.15);border:none;border-radius:8px;color:var(--dourado);font-size:13px;font-weight:600;padding:7px 12px;cursor:pointer;}
+.tabs{display:flex;background:var(--azul2);}
+.tab{flex:1;padding:10px;text-align:center;color:rgba(255,255,255,.6);font-size:13px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;}
+.tab.ativo{color:var(--dourado);border-bottom-color:var(--dourado);}
+.cad-menu{display:flex;flex-direction:column;gap:10px;}
+.cad-item{background:var(--branco);border-radius:14px;padding:16px;display:flex;align-items:center;gap:14px;border:1px solid #e2e6ef;cursor:pointer;}
+.cad-item:hover{background:#f7f9fc;}
+.cad-icone{width:44px;height:44px;background:#f0f4f8;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.cad-texto{flex:1;}
+.cad-titulo{font-size:15px;font-weight:700;color:var(--azul);margin-bottom:2px;}
+.cad-desc{font-size:12px;color:var(--muted);}
+.aviso{background:#fff8e8;border-radius:10px;padding:12px 14px;font-size:12px;color:#7a5a00;border:1px solid #f0d080;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;}
+.modal-overlay.visivel{display:flex;}
+.modal{background:var(--branco);border-radius:20px 20px 0 0;width:100%;max-height:85vh;overflow-y:auto;padding-bottom:32px;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0f2f6;position:sticky;top:0;background:var(--branco);}
+.modal-titulo{font-size:17px;font-weight:700;color:var(--azul);}
+.modal-fechar{background:none;border:none;font-size:28px;color:var(--muted);cursor:pointer;line-height:1;}
+.modal-body{padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
+.c-edit{display:flex;flex-direction:column;gap:4px;}
+.c-label{font-size:12px;font-weight:700;color:var(--azul);}
+.c-dica{font-size:11px;color:var(--muted);}
+.c-row{display:flex;align-items:center;}
+.c-afx{background:#f0f4f8;border:1.5px solid var(--borda);padding:9px 10px;font-size:13px;color:var(--muted);}
+.c-afx.pre{border-right:none;border-radius:8px 0 0 8px;}
+.c-afx.suf{border-left:none;border-radius:0 8px 8px 0;}
+.c-inp{flex:1;background:#f7f8fc;border:1.5px solid var(--borda);padding:9px 12px;font-size:14px;color:var(--texto);outline:none;border-radius:8px;}
+.c-inp.pre{border-radius:0 8px 8px 0;}
+.c-inp.suf{border-radius:8px 0 0 8px;}
+.c-inp:focus{border-color:var(--dourado);}
+.sec-label{font-size:11px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.8px;padding:8px 0 4px;border-top:1px solid #f0f2f6;margin-top:4px;}
 </style>
 </head>
 <body>
 
 
+<div class="tabs" id="appTabs" style="display:none"><div class="tab ativo" onclick="mudarTab('precificador')">Precificador</div><div class="tab" onclick="mudarTab('cadastros')">Cadastros</div></div>
 <div id="loginPage" class="login-page">
   <div class="login-card">
     <img src="logo.png" alt="Belarina" class="login-logo">
@@ -136,6 +168,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="header-top">
     <img src="logo.png" alt="Belarina">
     <button class="btn-cad" onclick="mudarTab('cadastros')">⚙️ Cadastros</button>
+    
   </div>
   <div class="header-sub">Precificador — Visão Diretor</div>
 </div>
@@ -230,6 +263,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="bd-row"><span class="desc">🧾 Carga Tributária</span><span class="val" id="bTrib">—</span></div>
         <div class="trib-sub" id="tribSub"></div>
         <div class="bd-row"><span class="desc">📈 Margem (10%)</span><span class="val" id="bMargem">—</span></div>
+        <div class="bd-row"><span class="desc">🤝 Comissão</span><span class="val" id="bComissao">—</span></div>
         <div class="bd-row total"><span class="desc">Preço Final / ton</span><span class="val" id="bTotal">—</span></div>
       </div>
       <div class="pb"></div>
@@ -237,15 +271,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
+
+
+
+
+
 <div id="page-cadastros" class="page">
   <div class="content">
     <div class="aviso">⚠️ Alterações aqui refletem em todos os celulares imediatamente.</div>
     <div class="cad-menu">
-      <div class="cad-item" onclick="abrirModal('premissas')"><div class="cad-icone">📊</div><div class="cad-texto"><div class="cad-titulo">Premissas</div><div class="cad-desc">CDI, custo de captação e senha do app</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
+      <div class="cad-item" onclick="abrirModal('premissas')"><div class="cad-icone">📊</div><div class="cad-texto"><div class="cad-titulo">Premissas</div><div class="cad-desc">CDI, comissão, custo de captação e senha</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
       <div class="cad-item" onclick="abrirModal('formacaoPreco')"><div class="cad-icone">🌽</div><div class="cad-texto"><div class="cad-titulo">Formação de Preço</div><div class="cad-desc">Custo base do Milho Degerminado</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
       <div class="cad-item" onclick="abrirModal('precoSA')"><div class="cad-icone">🏷️</div><div class="cad-texto"><div class="cad-titulo">Preço S.A. (Derivação)</div><div class="cad-desc">Fatores e FOB fixo por produto</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
       <div class="cad-item" onclick="abrirModal('estruturaCustos')"><div class="cad-icone">📦</div><div class="cad-texto"><div class="cad-titulo">Estrutura de Custos</div><div class="cad-desc">Custo de produção por embalagem</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
-      <div class="cad-item" onclick="abrirModal('frete')"><div class="cad-icone">🚛</div><div class="cad-texto"><div class="cad-titulo">Frete</div><div class="cad-desc">ANTT, carga/descarga, margem e distâncias</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
+      <div class="cad-item" onclick="abrirModal('frete')"><div class="cad-icone">🚛</div><div class="cad-texto"><div class="cad-titulo">Frete</div><div class="cad-desc">ANTT, margem, distâncias e novas cidades</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
       <div class="cad-item" onclick="abrirModal('cargaTrib')"><div class="cad-icone">🧾</div><div class="cad-texto"><div class="cad-titulo">Carga Tributária</div><div class="cad-desc">ICMS, FUNDEIC, PIS/COFINS por produto e UF</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
     </div>
     <div class="pb"></div>
@@ -270,7 +309,7 @@ const app=initializeApp({apiKey:"AIzaSyCdOfDyGw1jJ8jetIWwIC6qtslzxhD7GKw",authDo
 const db=getFirestore(app);
 
 const PADRAO={
-  premissas:{cdi:0.144,custoCaptacao:1.10,senha:'1234',usuarioDir:'diretor',senhaDir:'belarina2025'},
+  premissas:{cdi:0.144,custoCaptacao:1.10,comissao:0.02,senha:'1234',usuarioDir:'diretor',senhaDir:'belarina2025'},
   formacaoPreco:{custoMilhoBase:1065.6620513970588},
   precoSA:{milho_deg:{label:'Milho Degerminado',fator:1.00,fobFixo:null},canjicao:{label:'Canjicão',fator:1.10,fobFixo:null},canjica:{label:'Canjica',fator:1.10,fobFixo:null},gritz_grosso:{label:'Gritz Grosso',fator:1.05,fobFixo:null},gritz_medio:{label:'Gritz Médio',fator:1.05,fobFixo:null},gritz_fino:{label:'Gritz Fino',fator:1.05,fobFixo:null},fuba:{label:'Fubá',fator:0.95,fobFixo:null},germe:{label:'Gérmen de Milho',fator:null,fobFixo:677.44}},
   estruturaCustos:{granel:{label:'Granel',custo:99.989},sacaria_25:{label:'Sacaria 25kg',custo:145.987},sacaria_50:{label:'Sacaria 50kg',custo:145.987},big_bag:{label:'Big Bag',custo:125.987}},
@@ -317,7 +356,7 @@ window.fazerLogin=function(){
 function mostrarApp(){
   document.getElementById('loginPage').style.display='none';
   document.getElementById('appContent').style.display='block';
-  document.getElementById('appTabs').style.display='flex';
+  if(document.getElementById('appTabs'))document.getElementById('appTabs').style.display='flex';
   document.querySelectorAll('.page').forEach((p,i)=>{ if(i===0) p.classList.add('ativo'); });
 }
 
@@ -413,28 +452,38 @@ window.calcular=function(){
   }
 
   const MARGEM=0.10;
-  const precoFinal=((netFob+freteTon)/(1-custoFin-MARGEM))/(1-trib.total);
-  const margem=precoFinal*MARGEM;
+  const comissao=D.premissas.comissao!==undefined?D.premissas.comissao:0.02;
+  const precoSemCom=((netFob+freteTon)/(1-custoFin-MARGEM))/(1-trib.total);
+  const precoFinal=precoSemCom/(1-comissao);
+  const margem=precoSemCom*MARGEM;
+  const vlrComissao=precoFinal*comissao;
 
   document.getElementById('rValor').textContent=fmt(precoFinal);
   document.getElementById('rSub').textContent=`${prodData.label} · ${D.estruturaCustos[embalagem]?.label}\n${cidade}/${uf} · ${capacidade}t · ${prazo} dias`;
   document.getElementById('resultCard').classList.add('visivel');
 
-  set('bCusto',fmt(custoProd));set('bFob',fmt(fobProd));set('bNetFob',fmt(netFob));
-  set('bKm',km.toLocaleString('pt-BR')+' km');set('bFreteLiq',fmt(freteLiq));
-  set('bMargFrete',fmt(margFrete));set('bIcmsFrete',fmt(icmsFrete));
-  set('bPedagio',fmt(pedagioFinal));set('bFrete',fmt(freteTotal));set('bFreteTon',fmt(freteTon));
-  set('bFin',fmtPct(custoFin)+' ('+prazo+'d)');set('bTrib',fmtPct(trib.total));
+
+
+
+set('bFrete',fmt(freteTotal));set('bFreteTon',fmt(freteTon));
+  // Custo financeiro
+  set('bFin', fmtPct(custoFin)+' ('+prazo+'d) — '+fmt(precoFinal*custoFin));
+  // Crédito do cliente = ICMS 12% fixo + PIS/COFINS (variável por produto/cliente)
+  const creditoIcms  = 0.12;
+  const creditoPis   = trib.pis; // 0% ou 8,14% conforme produto/cliente
+  const creditoTotal = creditoIcms + creditoPis;
+  set('bCredito', fmtPct(creditoTotal));
   document.getElementById('tribSub').innerHTML=
-    `<span class="trib-item">ICMS <span>${fmtPct(trib.icms)}</span></span>`+
-    `<span class="trib-item">FUNDEIC <span>${fmtPct(trib.fund)}</span></span>`+
-    `<span class="trib-item">PIS/COFINS <span>${fmtPct(trib.pis)}</span></span>`;
-  set('bMargem',fmt(margem));set('bTotal',fmt(precoFinal));
+    `<span class="trib-item">ICMS <span>${fmtPct(creditoIcms)}</span></span>`+
+    `<span class="trib-item">PIS/COFINS <span>${fmtPct(creditoPis)}</span></span>`;
+  set('bFrete',fmt(freteTotal));set('bFreteTon',fmt(freteTon));set('bTotal',fmt(precoFinal));
+
+
   document.getElementById('breakdown').classList.add('visivel');
   document.getElementById('resultCard').scrollIntoView({behavior:'smooth'});
 };
 
-window.mudarTab=function(tab){
+window.mudarTab=function(tab){ return; //
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('ativo',['precificador','cadastros'][i]===tab));
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('ativo'));
   document.getElementById('page-'+tab).classList.add('ativo');
@@ -553,6 +602,158 @@ window.salvarModal=async function(){
   }catch(e){alert('❌ Erro ao salvar. Verifique a conexão.');}
 };
 
+
+// ── Tabs ───────────────────────────────────────────────────────────────────
+window.mudarTab=function(tab){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('ativo',['precificador','cadastros'][i]===tab));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('ativo'));
+  document.getElementById('page-'+tab).classList.add('ativo');
+};
+
+const CLABEL={mineracao:'Mineração',ind_cervejeira:'Ind. Cervejeira',ind_racao:'Ind. Ração Animal',varejo:'Varejo',varejo_sn:'Varejo Simples Nacional',atacado:'Atacado/Revenda/CD'};
+
+function c(label,id,val,pre,suf,dica){
+  return`<div class="c-edit"><div class="c-label">${label}</div>${dica?`<div class="c-dica">${dica}</div>`:''}<div class="c-row">${pre?`<span class="c-afx pre">${pre}</span>`:''}<input class="c-inp${pre?' pre':''}${suf?' suf':''}" id="${id}" value="${val}" inputmode="decimal">${suf?`<span class="c-afx suf">${suf}</span>`:''}</div></div>`;
+}
+function sec(t){return`<div class="sec-label">${t}</div>`;}
+
+function gerarForm(tipo){
+  let h='';
+  if(tipo==='premissas'){
+    h+=c('CDI (% ao ano)','p_cdi',(D.premissas.cdi*100).toFixed(4),'','%','Ex: 14.4 para 14,40%');
+    h+=c('Custo de Captação (% do CDI)','p_cap',(D.premissas.custoCaptacao*100).toFixed(2),'','%','Ex: 110 para 110% do CDI');
+    h+=c('Comissão (%)','p_com',((D.premissas.comissao||0.02)*100).toFixed(2),'','%','Percentual sobre o preço final');
+    h+=c('Senha do App','p_senha',D.premissas.senha,'','','Senha para acessar cadastros no celular');
+    h+=sec('Acesso Web — Diretor');
+    h+=c('Usuário','p_udir',D.premissas.usuarioDir||'diretor','','','');
+    h+=c('Senha','p_sdir',D.premissas.senhaDir||'belarina2025','','','');
+    h+=sec('Acesso Web — Comercial');
+    h+=c('Usuário','p_ucom',D.premissas.usuarioCom||'comercial','','','');
+    h+=c('Senha','p_scom',D.premissas.senhaCom||'belarina@com','','','');
+  }else if(tipo==='formacaoPreco'){
+    h+=c('Custo Base Milho Degerminado (R$/ton)','fp_c',D.formacaoPreco.custoMilhoBase.toFixed(4),'R$','','Base para calcular todos os derivados');
+  }else if(tipo==='precoSA'){
+    Object.entries(D.precoSA).forEach(([k,v])=>{
+      h+=v.fobFixo!==null?c(v.label,'psa_'+k,v.fobFixo,'R$','(FOB fixo)',''):c(v.label,'psa_'+k,(v.fator*100).toFixed(2),'','% do custo base','');
+    });
+  }else if(tipo==='estruturaCustos'){
+    Object.entries(D.estruturaCustos).forEach(([k,v])=>{h+=c(v.label,'ec_'+k,v.custo.toFixed(3),'R$','/ton','');});
+  }else if(tipo==='frete'){
+    h+=c('Valor ANTT por KM','fr_antt',D.frete.antt,'R$','/km','');
+    h+=c('Carga e Descarga','fr_cd',D.frete.cargaDescarga,'R$','','Valor fixo por viagem');
+    h+=c('Margem da Transportadora','fr_mg',(D.frete.margem*100).toFixed(1),'','%','ICMS do frete fixo em 12%');
+    h+=sec('Distâncias por Cidade (km de Cuiabá)');
+    const ufs=Object.keys(D.frete.distancias).sort();
+    h+=`<select id="fr_uf" onchange="renderKm()" style="border:1.5px solid var(--borda);border-radius:9px;padding:9px 12px;font-size:14px;background:#f7f8fc;width:100%">`;
+    ufs.forEach(u=>{h+=`<option value="${u}"${u==='PR'?' selected':''}>${u}</option>`;});
+    h+=`</select><div id="fr_km_list"></div>`;
+    h+=`<div style="margin-top:12px;padding:12px;background:#f0f5fc;border-radius:10px;border:1.5px dashed var(--azul)">
+      <div style="font-size:11px;font-weight:700;color:var(--azul);margin-bottom:8px">+ ADICIONAR NOVA CIDADE</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div><div style="font-size:11px;font-weight:600;color:var(--azul);margin-bottom:3px">Nome da Cidade</div>
+          <input id="nova_cidade" placeholder="Ex: Foz do Iguaçu" style="border:1.5px solid var(--borda);border-radius:8px;padding:8px 10px;font-size:13px;width:100%;outline:none"></div>
+        <div><div style="font-size:11px;font-weight:600;color:var(--azul);margin-bottom:3px">KM de Cuiabá</div>
+          <input id="nova_km" placeholder="Ex: 1426" inputmode="numeric" style="border:1.5px solid var(--borda);border-radius:8px;padding:8px 10px;font-size:13px;width:100%;outline:none"></div>
+      </div>
+      <button onclick="adicionarCidade()" style="background:var(--azul);color:var(--dourado);border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;width:100%;cursor:pointer">✓ Adicionar à lista</button>
+    </div>`;
+  }else if(tipo==='cargaTrib'){
+    h+=sec('ICMS Outorgado (%)');
+    h+=c('MT — Fubá','ct_i_mf',(D.cargaTrib.icms.MT_fuba*100).toFixed(3),'','%','');
+    h+=c('MT — Demais produtos','ct_i_mo',(D.cargaTrib.icms.MT_outros*100).toFixed(3),'','%','');
+    h+=c('Demais UFs','ct_i_o',(D.cargaTrib.icms.outros*100).toFixed(3),'','%','');
+    h+=sec('FUNDEIC / FUNDED (%)');
+    h+=c('MT — Fubá','ct_f_mf',(D.cargaTrib.fund.MT_fuba*100).toFixed(3),'','%','');
+    h+=c('MT — Demais','ct_f_mo',(D.cargaTrib.fund.MT_outros*100).toFixed(3),'','%','');
+    h+=c('Demais UFs','ct_f_o',(D.cargaTrib.fund.outros*100).toFixed(3),'','%','');
+    h+=sec('PIS/COFINS — Fubá (%)');
+    Object.entries(D.cargaTrib.pisCofins.fuba).forEach(([k,v])=>{h+=c(CLABEL[k]||k,'ct_pf_'+k,(v*100).toFixed(3),'','%','');});
+    h+=sec('PIS/COFINS — Demais Produtos (%)');
+    Object.entries(D.cargaTrib.pisCofins.outros).forEach(([k,v])=>{h+=c(CLABEL[k]||k,'ct_po_'+k,(v*100).toFixed(3),'','%','');});
+    h+=sec('Gérmen de Milho');
+    h+=c('Carga Tributária Total','ct_germe',(D.cargaTrib.germe*100).toFixed(3),'','%','');
+  }
+  h+=`<button class="btn-salvar" onclick="salvarModal()">💾 Salvar no Firebase</button>`;
+  return h;
+}
+
+window.adicionarCidade=function(){
+  const uf=document.getElementById('fr_uf')?.value;
+  const cidade=(document.getElementById('nova_cidade')?.value||'').trim();
+  const km=parseFloat(document.getElementById('nova_km')?.value||'0');
+  if(!cidade||!km){alert('Informe o nome da cidade e a distância em km.');return;}
+  if(!D.frete.distancias[uf])D.frete.distancias[uf]=[];
+  const existe=D.frete.distancias[uf].find(x=>x.cidade.toLowerCase()===cidade.toLowerCase());
+  if(existe){alert('Esta cidade já está cadastrada para esta UF.');return;}
+  D.frete.distancias[uf].push({cidade,km});
+  D.frete.distancias[uf].sort((a,b)=>a.km-b.km);
+  document.getElementById('nova_cidade').value='';
+  document.getElementById('nova_km').value='';
+  renderKm();
+  alert('Cidade adicionada! Clique em Salvar no Firebase para confirmar.');
+};
+
+window.renderKm=function(){
+  const uf=document.getElementById('fr_uf')?.value;
+  const div=document.getElementById('fr_km_list');
+  if(!uf||!div)return;
+  div.innerHTML='';
+  (D.frete.distancias[uf]||[]).forEach((ct,i)=>{
+    const l=ct.km*D.frete.antt+D.frete.cargaDescarga,m=l*D.frete.margem,ic=(l+m)*D.frete.icmsFrete,t=l+m+ic;
+    div.innerHTML+=`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f0f2f6"><span style="flex:2;font-size:13px">${ct.cidade}</span><input id="km_${i}" value="${ct.km}" style="flex:1;border:1.5px solid var(--borda);border-radius:7px;padding:6px 8px;font-size:13px;text-align:center" inputmode="numeric"><span style="flex:1.5;font-size:11px;color:var(--muted);text-align:right">R$ ${t.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>`;
+  });
+};
+
+window.abrirModal=function(tipo){
+  modalAtual=tipo;
+  const titulos={premissas:'Premissas',formacaoPreco:'Formação de Preço',precoSA:'Preço S.A. (Derivação)',estruturaCustos:'Estrutura de Custos',frete:'Frete',cargaTrib:'Carga Tributária'};
+  document.getElementById('modalTitulo').textContent=titulos[tipo];
+  document.getElementById('modalBody').innerHTML=gerarForm(tipo);
+  document.getElementById('modalOverlay').classList.add('visivel');
+  if(tipo==='frete')setTimeout(renderKm,50);
+};
+
+window.fecharModal=function(){document.getElementById('modalOverlay').classList.remove('visivel');modalAtual=null;};
+window.fecharSeFora=function(e){if(e.target===document.getElementById('modalOverlay'))fecharModal();};
+
+const gv=(id)=>{const el=document.getElementById(id);return el?parseFloat(el.value)||0:0;};
+const gs=(id)=>{const el=document.getElementById(id);return el?el.value:'';};
+
+window.salvarModal=async function(){
+  const tipo=modalAtual;let novos={};
+  if(tipo==='premissas'){novos={cdi:gv('p_cdi')/100,custoCaptacao:gv('p_cap')/100,comissao:gv('p_com')/100,senha:gs('p_senha'),usuarioDir:gs('p_udir'),senhaDir:gs('p_sdir'),usuarioCom:gs('p_ucom'),senhaCom:gs('p_scom')};}
+  else if(tipo==='formacaoPreco'){novos={custoMilhoBase:gv('fp_c')};}
+  else if(tipo==='precoSA'){
+    novos=JSON.parse(JSON.stringify(D.precoSA));
+    Object.entries(novos).forEach(([k,v])=>{const val=gv('psa_'+k);if(v.fobFixo!==null)novos[k].fobFixo=val;else novos[k].fator=val/100;});
+  }else if(tipo==='estruturaCustos'){
+    novos=JSON.parse(JSON.stringify(D.estruturaCustos));
+    Object.keys(novos).forEach(k=>{novos[k].custo=gv('ec_'+k);});
+  }else if(tipo==='frete'){
+    const uf=document.getElementById('fr_uf')?.value;
+    const dist=JSON.parse(JSON.stringify(D.frete.distancias));
+    if(uf&&dist[uf])dist[uf]=dist[uf].map((ct,i)=>({...ct,km:parseFloat(document.getElementById('km_'+i)?.value)||ct.km}));
+    novos={antt:gv('fr_antt'),cargaDescarga:gv('fr_cd'),margem:gv('fr_mg')/100,icmsFrete:0.12,distancias:dist};
+  }else if(tipo==='cargaTrib'){
+    novos={
+      icms:{MT_fuba:gv('ct_i_mf')/100,MT_outros:gv('ct_i_mo')/100,outros:gv('ct_i_o')/100},
+      fund:{MT_fuba:gv('ct_f_mf')/100,MT_outros:gv('ct_f_mo')/100,outros:gv('ct_f_o')/100},
+      pisCofins:{
+        fuba:Object.keys(D.cargaTrib.pisCofins.fuba).reduce((a,k)=>{a[k]=gv('ct_pf_'+k)/100;return a;},{}),
+        outros:Object.keys(D.cargaTrib.pisCofins.outros).reduce((a,k)=>{a[k]=gv('ct_po_'+k)/100;return a;},{}),
+      },
+      germe:gv('ct_germe')/100,
+    };
+  }
+  try{
+    await salvarFirebase(tipo,novos);
+    fecharModal();
+    if(['precoSA','estruturaCustos','frete'].includes(tipo)){montarProdutos();montarEmbalagens();filtrarCidades();}
+    alert('✅ Salvo com sucesso!');
+  }catch(e){alert('❌ Erro ao salvar. Verifique a conexão.');}
+};
+
+let modalAtual=null;
 // Inicializar
 (async()=>{
   await carregarFirebase();
