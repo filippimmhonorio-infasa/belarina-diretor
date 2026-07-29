@@ -326,12 +326,12 @@ const DMAP={premissas:'premissas',formacaoPreco:'formacao_preco',precoSA:'preco_
 const USUARIO_PADRAO = 'diretor';
 const SENHA_PADRAO   = 'belarina2025';
 
-window.verificarLogin(){
+window.verificarLogin=function(){
   // Verificar se já está logado nesta sessão
   if(sessionStorage.getItem('belarinavDir')==='1'){
     mostrarApp();
   }
-}
+};
 
 window.fazerLogin=function(){
   const usuario = document.getElementById('loginUsuario').value.trim();
@@ -353,7 +353,7 @@ window.fazerLogin=function(){
   }
 };
 
-window.mostrarApp(){
+window.mostrarApp=function(){
   document.getElementById('loginPage').style.display='none';
   document.getElementById('appContent').style.display='block';
   if(document.getElementById('appTabs'))document.getElementById('appTabs').style.display='flex';
