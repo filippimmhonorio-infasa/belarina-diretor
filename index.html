@@ -504,6 +504,7 @@ function gerarForm(tipo){
   if(tipo==='premissas'){
     h+=c('CDI (% ao ano)','p_cdi',(D.premissas.cdi*100).toFixed(4),'','%','Ex: 14.4 para 14,40%');
     h+=c('Custo de Captação (% do CDI)','p_cap',(D.premissas.custoCaptacao*100).toFixed(2),'','%','Ex: 110 para 110% do CDI');
+    h+=c('Comissão (%)','p_com',((D.premissas.comissao||0.02)*100).toFixed(2),'','%','Percentual de comissão sobre o preço final');
     h+=c('Senha do App','p_senha',D.premissas.senha,'','','Senha para acessar cadastros no celular');
     h+=sec('Acesso Web — Diretor');
     h+=c('Usuário (login web)','p_udir',D.premissas.usuarioDir||'diretor','','','Login da tela web do diretor');
