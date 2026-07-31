@@ -526,6 +526,16 @@ function gerarForm(tipo){
     h+=`<select id="fr_uf" onchange="renderKm()" style="border:1.5px solid var(--borda);border-radius:9px;padding:9px 12px;font-size:14px;background:#f7f8fc;width:100%">`;
     ufs.forEach(u=>{h+=`<option value="${u}"${u==='PR'?' selected':''}>${u}</option>`;});
     h+=`</select><div id="fr_km_list"></div>`;
+    h+=`<div style="margin-top:12px;padding:12px;background:#f0f5fc;border-radius:10px;border:1.5px dashed var(--azul)">
+      <div style="font-size:11px;font-weight:700;color:var(--azul);margin-bottom:8px">+ ADICIONAR NOVA CIDADE</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div><div style="font-size:11px;font-weight:600;color:var(--azul);margin-bottom:3px">Nome da Cidade</div>
+          <input id="nova_cidade" placeholder="Ex: Foz do Iguaçu" style="border:1.5px solid var(--borda);border-radius:8px;padding:8px 10px;font-size:13px;width:100%;outline:none"></div>
+        <div><div style="font-size:11px;font-weight:600;color:var(--azul);margin-bottom:3px">KM de Cuiabá</div>
+          <input id="nova_km" placeholder="Ex: 1426" inputmode="numeric" style="border:1.5px solid var(--borda);border-radius:8px;padding:8px 10px;font-size:13px;width:100%;outline:none"></div>
+      </div>
+      <button onclick="adicionarCidade()" style="background:var(--azul);color:var(--dourado);border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;width:100%;cursor:pointer">✓ Adicionar à lista</button>
+    </div>`;
   }else if(tipo==='cargaTrib'){
     h+=sec('ICMS Outorgado (%)');
     h+=c('MT — Fubá','ct_i_mf',(D.cargaTrib.icms.MT_fuba*100).toFixed(3),'','%','');
@@ -545,6 +555,23 @@ function gerarForm(tipo){
   h+=`<button class="btn-salvar" onclick="salvarModal()">💾 Salvar no Firebase</button>`;
   return h;
 }
+
+
+window.adicionarCidade=function(){
+  const uf=document.getElementById('fr_uf')?.value;
+  const cidade=(document.getElementById('nova_cidade')?.value||'').trim();
+  const km=parseFloat(document.getElementById('nova_km')?.value||'0');
+  if(!cidade||!km){alert('Informe o nome da cidade e a distância em km.');return;}
+  if(!D.frete.distancias[uf])D.frete.distancias[uf]=[];
+  const existe=D.frete.distancias[uf].find(x=>x.cidade.toLowerCase()===cidade.toLowerCase());
+  if(existe){alert('Esta cidade já está cadastrada para esta UF.');return;}
+  D.frete.distancias[uf].push({cidade,km});
+  D.frete.distancias[uf].sort((a,b)=>a.km-b.km);
+  document.getElementById('nova_cidade').value='';
+  document.getElementById('nova_km').value='';
+  renderKm();
+  alert('✅ Cidade adicionada! Clique em Salvar no Firebase para confirmar.');
+};
 
 window.renderKm=function(){
   const uf=document.getElementById('fr_uf')?.value;
