@@ -664,18 +664,21 @@ window.calcular=function(){
 
 
 
-set('bFrete',fmt(freteTotal));set('bFreteTon',fmt(freteTon));
-  // Custo financeiro
-  set('bFin', fmtPct(custoFin)+' ('+prazo+'d) — '+fmt(precoFinal*custoFin));
-  // Crédito do cliente = ICMS 12% fixo + PIS/COFINS (variável por produto/cliente)
-  const creditoIcms  = 0.12;
-  const creditoPis   = trib.pis; // 0% ou 8,14% conforme produto/cliente
-  const creditoTotal = creditoIcms + creditoPis;
-  set('bCredito', fmtPct(creditoTotal));
+// Breakdown completo para o diretor
+  set('bCusto',fmt(custoProd));set('bFob',fmt(fobProd));set('bNetFob',fmt(netFob));
+  set('bKm',km.toLocaleString('pt-BR')+' km');set('bFreteLiq',fmt(freteLiq));
+  set('bMargFrete',fmt(margFrete));set('bIcmsFrete',fmt(icmsFrete));
+  set('bPedagio',fmt(pedagioFinal));
+  set('bFrete',fmt(freteTotal));set('bFreteTon',fmt(freteTon));
+  set('bFin',fmtPct(custoFin)+' ('+prazo+'d) — '+fmt(precoFinal*custoFin));
+  set('bTrib',fmtPct(trib.total));
   document.getElementById('tribSub').innerHTML=
-    `<span class="trib-item">ICMS <span>${fmtPct(creditoIcms)}</span></span>`+
-    `<span class="trib-item">PIS/COFINS <span>${fmtPct(creditoPis)}</span></span>`;
-  set('bFrete',fmt(freteTotal));set('bFreteTon',fmt(freteTon));set('bTotal',fmt(precoFinal));
+    `<span class="trib-item">ICMS <span>${fmtPct(trib.icms)}</span></span>`+
+    `<span class="trib-item">FUNDEIC <span>${fmtPct(trib.fund)}</span></span>`+
+    `<span class="trib-item">PIS/COFINS <span>${fmtPct(trib.pis)}</span></span>`;
+  set('bMargem',fmt(margem));
+  set('bComissao',fmtPct(comissao)+' — '+fmt(vlrComissao));
+  set('bTotal',fmt(precoFinal));
 
 
   document.getElementById('breakdown').classList.add('visivel');
@@ -835,14 +838,21 @@ window.salvarModal=async function(){
 
 // ── MENU INICIAL ────────────────────────────────────────────────────────────
 window.irPara=function(destino){
-  ['menu','nacional','exportacao'].forEach(p=>{
-    const el=document.getElementById('page-'+p);
-    if(el) el.classList.toggle('ativo', p===destino);
-    if(el) el.classList.toggle('page', true);
+  // Esconder todas as pages
+  ['page-menu','page-precificador','page-exportacao','page-cadastros'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){ el.classList.remove('ativo'); }
   });
-  // Alias: 'nacional' abre o page-precificador
-  const precEl = document.getElementById('page-precificador');
-  if(precEl) precEl.classList.toggle('ativo', destino==='nacional');
+  // Mostrar a page correta
+  if(destino==='menu'){
+    document.getElementById('page-menu')?.classList.add('ativo');
+  } else if(destino==='nacional'){
+    document.getElementById('page-precificador')?.classList.add('ativo');
+  } else if(destino==='exportacao'){
+    document.getElementById('page-exportacao')?.classList.add('ativo');
+  } else if(destino==='cadastros'){
+    document.getElementById('page-cadastros')?.classList.add('ativo');
+  }
 };
 
 // ── EXPORTAÇÃO ───────────────────────────────────────────────────────────────
