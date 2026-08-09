@@ -139,6 +139,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .c-inp.suf{border-radius:8px 0 0 8px;}
 .c-inp:focus{border-color:var(--dourado);}
 .sec-label{font-size:11px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.8px;padding:8px 0 4px;border-top:1px solid #f0f2f6;margin-top:4px;}
+
+/* ── EXPORTAÇÃO ─────────────────────────────────────────────────────────── */
+.menu-inicial{display:flex;flex-direction:column;gap:16px;padding:24px 16px;max-width:480px;margin:0 auto;}
+.menu-titulo{text-align:center;font-size:14px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.menu-btn{background:var(--branco);border:2px solid var(--borda);border-radius:16px;padding:24px 20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:all .15s;}
+.menu-btn:hover,.menu-btn.ativo{border-color:var(--azul);background:#f0f5fc;}
+.menu-btn-icone{font-size:32px;width:56px;text-align:center;flex-shrink:0;}
+.menu-btn-texto{flex:1;}
+.menu-btn-label{font-size:17px;font-weight:800;color:var(--azul);margin-bottom:3px;}
+.menu-btn-desc{font-size:12px;color:var(--muted);}
+.btn-voltar-menu{background:none;border:none;color:var(--dourado);font-size:14px;font-weight:600;cursor:pointer;padding:4px 0;}
+.frete-expo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.btn-frete-expo{border:1.5px solid var(--borda);border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;background:#f7f8fc;}
+.btn-frete-expo.ativo{border-color:var(--azul);background:var(--azul);}
+.btn-frete-expo-label{font-size:15px;font-weight:800;color:var(--muted);}
+.btn-frete-expo.ativo .btn-frete-expo-label{color:var(--dourado);}
+.btn-frete-expo-desc{font-size:10px;color:var(--muted);margin-top:2px;}
+.btn-frete-expo.ativo .btn-frete-expo-desc{color:rgba(255,255,255,.7);}
+.campo-expo{display:flex;flex-direction:column;gap:4px;}
+.campo-expo label{font-size:10.5px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.6px;}
+.campo-expo input,.campo-expo select{background:#f7f8fc;border:1.5px solid var(--borda);border-radius:9px;padding:10px 12px;font-size:14px;color:var(--texto);width:100%;outline:none;appearance:none;-webkit-appearance:none;}
+.campo-expo input:focus,.campo-expo select:focus{border-color:var(--dourado);}
+.badge-expo{background:#e8f5ed;color:#1b6b3a;font-size:11px;font-weight:700;border-radius:6px;padding:3px 8px;display:inline-block;}
+.secao-expo{font-size:10px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.8px;padding:6px 0 2px;border-top:1px solid #f0f2f6;margin-top:4px;}
+
 </style>
 </head>
 <body>
@@ -178,7 +203,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="tab" onclick="mudarTab('cadastros')">Cadastros</div>
 </div>
 
-<div id="page-precificador" class="page ativo">
+
+<div id="page-menu" class="page ativo" style="background:var(--fundo);min-height:60vh;">
+  <div class="menu-inicial">
+    <div class="menu-titulo">Selecione o módulo</div>
+    <div class="menu-btn" onclick="irPara('nacional')">
+      <div class="menu-btn-icone">🌽</div>
+      <div class="menu-btn-texto">
+        <div class="menu-btn-label">Vendas Nacionais</div>
+        <div class="menu-btn-desc">Precificação para o mercado interno</div>
+      </div>
+      <div style="font-size:22px;color:var(--muted)">›</div>
+    </div>
+    <div class="menu-btn" onclick="irPara('exportacao')">
+      <div class="menu-btn-icone">🌍</div>
+      <div class="menu-btn-texto">
+        <div class="menu-btn-label">Exportações</div>
+        <div class="menu-btn-desc">Precificação para o mercado externo</div>
+      </div>
+      <div style="font-size:22px;color:var(--muted)">›</div>
+    </div>
+  </div>
+</div>
+
+<div id="page-precificador" class="page">
   <div id="loading-prec" class="loading"><div class="spinner"></div>Carregando dados...</div>
   <div id="form-prec" style="display:none">
     <div class="content">
@@ -298,6 +346,157 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <button class="modal-fechar" onclick="fecharModal()">×</button>
     </div>
     <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+
+<div id="page-exportacao" class="page">
+  <div id="form-expo">
+    <div class="content">
+      <button class="btn-voltar-menu" onclick="irPara('menu')">← Voltar ao menu</button>
+
+      <div class="card">
+        <div class="card-titulo">Produto &amp; Embalagem</div>
+        <div class="card-body">
+          <div class="row2">
+            <div class="campo-expo"><label>Produto</label><select id="expo_produto" onchange="expoLimpar()"></select></div>
+            <div class="campo-expo"><label>Embalagem</label><select id="expo_embalagem" onchange="expoLimpar()"></select></div>
+          </div>
+          <div class="campo-expo">
+            <label>Cliente / Aplicação</label>
+            <div style="background:#f0f4f8;border:1.5px solid #c8d0dc;border-radius:9px;padding:10px 12px;font-size:14px;color:var(--muted);display:flex;align-items:center;gap:8px;">
+              🌍 <strong>Exportação</strong> <span class="badge-expo">Tributos zerados</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-titulo">Tipo de Frete</div>
+        <div class="card-body">
+          <div class="frete-expo-grid">
+            <div class="btn-frete-expo ativo" id="btnExpoEXW" onclick="selecionarFreteExpo('EXW')">
+              <div class="btn-frete-expo-label">EXW</div><div class="btn-frete-expo-desc">Frete por conta do comprador</div>
+            </div>
+            <div class="btn-frete-expo" id="btnExpoFCA" onclick="selecionarFreteExpo('FCA')">
+              <div class="btn-frete-expo-label">FCA</div><div class="btn-frete-expo-desc">Frete rodoviário até destino</div>
+            </div>
+            <div class="btn-frete-expo" id="btnExpoFOB" onclick="selecionarFreteExpo('FOB')">
+              <div class="btn-frete-expo-label">FOB</div><div class="btn-frete-expo-desc">+ Logística portuária</div>
+            </div>
+            <div class="btn-frete-expo" id="btnExpoCIF" onclick="selecionarFreteExpo('CIF')">
+              <div class="btn-frete-expo-label">CIF</div><div class="btn-frete-expo-desc">+ Frete internacional</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="cardExpoFCA" style="display:none">
+        <div class="card-titulo">Frete Rodoviário (FCA)</div>
+        <div class="card-body">
+          <div class="row2">
+            <div class="campo-expo"><label>UF Destino</label><select id="expo_uf" onchange="expoFiltrarCidades()"><option value="AC">Acre</option><option value="AL">Alagoas</option><option value="AM">Amazonas</option><option value="AP">Amapá</option><option value="BA">Bahia</option><option value="CE">Ceará</option><option value="DF">Distrito Federal</option><option value="ES">Espírito Santo</option><option value="GO">Goiás</option><option value="MA">Maranhão</option><option value="MG">Minas Gerais</option><option value="MS">Mato Grosso do Sul</option><option value="MT">Mato Grosso</option><option value="PA">Pará</option><option value="PB">Paraíba</option><option value="PE">Pernambuco</option><option value="PI">Piauí</option><option value="PR" selected>Paraná</option><option value="RJ">Rio de Janeiro</option><option value="RN">Rio Grande do Norte</option><option value="RO">Rondônia</option><option value="RR">Roraima</option><option value="RS">Rio Grande do Sul</option><option value="SC">Santa Catarina</option><option value="SE">Sergipe</option><option value="SP">São Paulo</option><option value="TO">Tocantins</option></select></div>
+            <div class="campo-expo"><label>Cidade</label><select id="expo_cidade"></select></div>
+          </div>
+          <div class="row2">
+            <div class="campo-expo"><label>Pedágio (R$)</label><input type="number" id="expo_pedagio" value="0" step="10" inputmode="decimal"></div>
+            <div class="campo-expo"><label>Capacidade (ton)</label><input type="number" id="expo_capacidade" value="25" min="1" inputmode="decimal"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="cardExpoFOB" style="display:none">
+        <div class="card-titulo">Frete Rodoviário + Logística Portuária (FOB)</div>
+        <div class="card-body">
+          <div class="row2">
+            <div class="campo-expo"><label>UF Destino</label><select id="expo_uf_fob" onchange="expoFiltrarCidadesFOB()"><option value="AC">Acre</option><option value="AL">Alagoas</option><option value="AM">Amazonas</option><option value="AP">Amapá</option><option value="BA">Bahia</option><option value="CE">Ceará</option><option value="DF">Distrito Federal</option><option value="ES">Espírito Santo</option><option value="GO">Goiás</option><option value="MA">Maranhão</option><option value="MG">Minas Gerais</option><option value="MS">Mato Grosso do Sul</option><option value="MT">Mato Grosso</option><option value="PA">Pará</option><option value="PB">Paraíba</option><option value="PE">Pernambuco</option><option value="PI">Piauí</option><option value="PR" selected>Paraná</option><option value="RJ">Rio de Janeiro</option><option value="RN">Rio Grande do Norte</option><option value="RO">Rondônia</option><option value="RR">Roraima</option><option value="RS">Rio Grande do Sul</option><option value="SC">Santa Catarina</option><option value="SE">Sergipe</option><option value="SP">São Paulo</option><option value="TO">Tocantins</option></select></div>
+            <div class="campo-expo"><label>Cidade</label><select id="expo_cidade_fob"></select></div>
+          </div>
+          <div class="row2">
+            <div class="campo-expo"><label>Pedágio (R$)</label><input type="number" id="expo_pedagio_fob" value="0" step="10" inputmode="decimal"></div>
+            <div class="campo-expo"><label>Capacidade (ton/cntr)</label><input type="number" id="expo_cap_fob" value="25" min="1" inputmode="decimal"></div>
+          </div>
+          <div class="secao-expo">Logística e Serviços Portuários (R$ por container)</div>
+          <div class="row2">
+            <div class="campo-expo"><label>Cross Docking</label><input type="number" id="expo_cross" value="1750" inputmode="decimal"></div>
+            <div class="campo-expo"><label>Transp. Vazio/Cheio</label><input type="number" id="expo_transp" value="1065" inputmode="decimal"></div>
+          </div>
+          <div class="row2">
+            <div class="campo-expo"><label>Scanner TCP</label><input type="number" id="expo_scanner" value="30" inputmode="decimal"></div>
+            <div class="campo-expo"><label>Despacho</label><input type="number" id="expo_despacho" value="800" inputmode="decimal"></div>
+          </div>
+          <div class="row2">
+            <div class="campo-expo"><label>Fumigação</label><input type="number" id="expo_fumigacao" value="170" inputmode="decimal"></div>
+            <div class="campo-expo"><label>Tx Locais Expo</label><input type="number" id="expo_tx_locais" value="3404.20" inputmode="decimal"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="cardExpoCIF" style="display:none">
+        <div class="card-titulo">Frete Internacional (CIF) — além de todos os custos FOB</div>
+        <div class="card-body">
+          <div class="row2">
+            <div class="campo-expo"><label>UF Destino</label><select id="expo_uf_cif" onchange="expoFiltrarCidadesCIF()"><option value="AC">Acre</option><option value="AL">Alagoas</option><option value="AM">Amazonas</option><option value="AP">Amapá</option><option value="BA">Bahia</option><option value="CE">Ceará</option><option value="DF">Distrito Federal</option><option value="ES">Espírito Santo</option><option value="GO">Goiás</option><option value="MA">Maranhão</option><option value="MG">Minas Gerais</option><option value="MS">Mato Grosso do Sul</option><option value="MT">Mato Grosso</option><option value="PA">Pará</option><option value="PB">Paraíba</option><option value="PE">Pernambuco</option><option value="PI">Piauí</option><option value="PR" selected>Paraná</option><option value="RJ">Rio de Janeiro</option><option value="RN">Rio Grande do Norte</option><option value="RO">Rondônia</option><option value="RR">Roraima</option><option value="RS">Rio Grande do Sul</option><option value="SC">Santa Catarina</option><option value="SE">Sergipe</option><option value="SP">São Paulo</option><option value="TO">Tocantins</option></select></div>
+            <div class="campo-expo"><label>Cidade</label><select id="expo_cidade_cif"></select></div>
+          </div>
+          <div class="row2">
+            <div class="campo-expo"><label>Pedágio (R$)</label><input type="number" id="expo_pedagio_cif" value="0" step="10" inputmode="decimal"></div>
+            <div class="campo-expo"><label>Capacidade (ton/cntr)</label><input type="number" id="expo_cap_cif" value="25" min="1" inputmode="decimal"></div>
+          </div>
+          <div class="secao-expo">Logística e Serviços Portuários (R$ por container)</div>
+          <div class="row2">
+            <div class="campo-expo"><label>Cross Docking</label><input type="number" id="expo_cross_cif" value="1750" inputmode="decimal"></div>
+            <div class="campo-expo"><label>Transp. Vazio/Cheio</label><input type="number" id="expo_transp_cif" value="1065" inputmode="decimal"></div>
+          </div>
+          <div class="row2">
+            <div class="campo-expo"><label>Scanner TCP</label><input type="number" id="expo_scanner_cif" value="30" inputmode="decimal"></div>
+            <div class="campo-expo"><label>Despacho</label><input type="number" id="expo_despacho_cif" value="800" inputmode="decimal"></div>
+          </div>
+          <div class="row2">
+            <div class="campo-expo"><label>Fumigação</label><input type="number" id="expo_fumigacao_cif" value="170" inputmode="decimal"></div>
+            <div class="campo-expo"><label>Tx Locais Expo</label><input type="number" id="expo_tx_locais_cif" value="3404.20" inputmode="decimal"></div>
+          </div>
+          <div class="secao-expo">Frete Internacional</div>
+          <div class="row2">
+            <div class="campo-expo"><label>Frete Internacional (USD)</label><input type="number" id="expo_frete_int_usd" value="4466" inputmode="decimal"></div>
+            <div class="campo-expo"><label>Taxa do Dólar (R$/USD)</label><input type="number" id="expo_cambio" value="4.00" step="0.01" inputmode="decimal"></div>
+          </div>
+          <div class="campo-expo"><label>Toneladas base frete internacional</label><input type="number" id="expo_ton_frete_int" value="100" inputmode="decimal"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-titulo">Condições de Pagamento</div>
+        <div class="card-body">
+          <div class="campo-expo"><label>Lead Time Processo de Exportação (dias)</label>
+          <input type="number" id="expo_prazo" value="60" min="0" max="999" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,3)"></div>
+        </div>
+      </div>
+
+      <button class="btn-calc" onclick="expoCalcular()">Calcular Preço de Exportação</button>
+
+      <div class="result-card" id="expoResultCard" style="display:none">
+        <div class="result-label">Preço de Exportação / Tonelada</div>
+        <div class="result-valor" id="expoResultValor">—</div>
+        <div class="result-sub" id="expoResultSub"></div>
+      </div>
+
+      <div class="breakdown" id="expoBreakdown" style="display:none">
+        <div class="bd-titulo">Composição do Preço — Exportação</div>
+        <div class="bd-row"><span class="desc">📦 Custo de Produção / ton</span><span class="val" id="eb_custo">—</span></div>
+        <div class="bd-row"><span class="desc">🌽 FOB Produto / ton</span><span class="val" id="eb_fob_prod">—</span></div>
+        <div class="bd-row dest"><span class="desc">📊 Preço NET FOB</span><span class="val" id="eb_net_fob">—</span></div>
+        <div id="eb_frete_rows"></div>
+        <div class="bd-row"><span class="desc">⏱ Custo Financeiro (Lead Time)</span><span class="val" id="eb_fin">—</span></div>
+        <div class="bd-row"><span class="desc">🌍 Tributos (Exportação)</span><span class="val">0,00% — isento</span></div>
+        
+        <div class="bd-row"><span class="desc">📈 Margem (10%)</span><span class="val" id="eb_margem">—</span></div>
+        <div class="bd-row" id="eb_comissao_row"><span class="desc">🤝 Comissão</span><span class="val" id="eb_comissao">—</span></div>
+        <div class="bd-row total"><span class="desc">Preço Final / ton</span><span class="val" id="eb_total">—</span></div>
+      </div>
+
+      <div class="pb"></div>
+    </div>
   </div>
 </div>
 
@@ -628,22 +827,204 @@ window.salvarModal=async function(){
   try{
     await salvarFirebase(tipo,novos);
     fecharModal();
-    if(['precoSA','estruturaCustos','frete'].includes(tipo)){montarProdutos();montarEmbalagens();filtrarCidades();}
+    if(['precoSA','estruturaCustos','frete'].includes(tipo)){montarProdutos();montarEmbalagens();filtrarCidades();inicializarExpo();}
     alert('✅ Salvo com sucesso!');
   }catch(e){alert('❌ Erro ao salvar. Verifique a conexão.');}
 };
 
+
+// ── MENU INICIAL ────────────────────────────────────────────────────────────
+window.irPara=function(destino){
+  ['menu','nacional','exportacao'].forEach(p=>{
+    const el=document.getElementById('page-'+p);
+    if(el) el.classList.toggle('ativo', p===destino);
+    if(el) el.classList.toggle('page', true);
+  });
+  // Alias: 'nacional' abre o page-precificador
+  const precEl = document.getElementById('page-precificador');
+  if(precEl) precEl.classList.toggle('ativo', destino==='nacional');
+};
+
+// ── EXPORTAÇÃO ───────────────────────────────────────────────────────────────
+let tipoFreteExpo='EXW';
+
+window.selecionarFreteExpo=function(tipo){
+  tipoFreteExpo=tipo;
+  ['EXW','FCA','FOB','CIF'].forEach(t=>{
+    document.getElementById('btnExpo'+t)?.classList.toggle('ativo',t===tipo);
+  });
+  document.getElementById('cardExpoFCA').style.display=tipo==='FCA'?'block':'none';
+  document.getElementById('cardExpoFOB').style.display=tipo==='FOB'?'block':'none';
+  document.getElementById('cardExpoCIF').style.display=tipo==='CIF'?'block':'none';
+  expoLimpar();
+};
+
+function expoPopularCidades(ufId, cidadeId){
+  const uf=document.getElementById(ufId)?.value;
+  const sel=document.getElementById(cidadeId);
+  if(!sel) return;
+  sel.innerHTML='';
+  (D.frete.distancias[uf]||[]).forEach(({cidade})=>{
+    const o=document.createElement('option');o.value=cidade;o.textContent=cidade;sel.appendChild(o);
+  });
+}
+
+window.expoFiltrarCidades=function(){ expoPopularCidades('expo_uf','expo_cidade'); };
+window.expoFiltrarCidadesFOB=function(){ expoPopularCidades('expo_uf_fob','expo_cidade_fob'); };
+window.expoFiltrarCidadesCIF=function(){ expoPopularCidades('expo_uf_cif','expo_cidade_cif'); };
+window.expoLimpar=function(){
+  document.getElementById('expoResultCard').style.display='none';
+  document.getElementById('expoBreakdown').style.display='none';
+};
+
+function expoGetFreteTon(){
+  const gn=id=>{const el=document.getElementById(id);return el?parseFloat(el.value)||0:0;};
+  let freteTon=0, detalhes=[];
+
+  function calcFreteRdv(ufId, cidadeId, pedagioId, capId){
+    const uf=document.getElementById(ufId)?.value;
+    const cidade=document.getElementById(cidadeId)?.value;
+    const pedagio=gn(pedagioId), cap=gn(capId)||25;
+    const cd=(D.frete.distancias[uf]||[]).find(c=>c.cidade===cidade);
+    const km=cd?cd.km:0;
+    const liq=km*D.frete.antt+D.frete.cargaDescarga;
+    const marg=liq*D.frete.margem;
+    const icms=(liq+marg)*D.frete.icmsFrete;
+    const total=liq+marg+icms+pedagio;
+    return {km, total, ton: total/cap};
+  }
+
+  function calcLogistica(suf){
+    const s=suf||'';
+    return gn('expo_cross'+s)+gn('expo_transp'+s)+gn('expo_scanner'+s)+
+           gn('expo_despacho'+s)+gn('expo_fumigacao'+s)+gn('expo_tx_locais'+s);
+  }
+
+  if(tipoFreteExpo==='EXW'){
+    freteTon=0;
+    detalhes=[{desc:'🚚 Frete (EXW)',val:'R$ 0,00 — por conta do comprador'}];
+
+  }else if(tipoFreteExpo==='FCA'){
+    const r=calcFreteRdv('expo_uf','expo_cidade','expo_pedagio','expo_capacidade');
+    freteTon=r.ton;
+    detalhes=[
+      {desc:'🛣️ KM rodados',val:r.km.toLocaleString('pt-BR')+' km'},
+      {desc:'🚛 Frete Total (FCA)',val:fmt(r.total)},
+      {desc:'📍 Frete / ton',val:fmt(r.ton)},
+    ];
+
+  }else if(tipoFreteExpo==='FOB'){
+    const r=calcFreteRdv('expo_uf_fob','expo_cidade_fob','expo_pedagio_fob','expo_cap_fob');
+    const cap=gn('expo_cap_fob')||25;
+    const log=calcLogistica('');
+    const logTon=log/cap;
+    freteTon=r.ton+logTon;
+    detalhes=[
+      {desc:'🛣️ KM rodados',val:r.km.toLocaleString('pt-BR')+' km'},
+      {desc:'🚛 Frete Rdv / ton',val:fmt(r.ton)},
+      {desc:'⚓ Logística Portuária total',val:fmt(log)},
+      {desc:'⚓ Logística / ton',val:fmt(logTon)},
+      {desc:'📍 Frete Total / ton (FOB)',val:fmt(freteTon)},
+    ];
+
+  }else if(tipoFreteExpo==='CIF'){
+    const r=calcFreteRdv('expo_uf_cif','expo_cidade_cif','expo_pedagio_cif','expo_cap_cif');
+    const cap=gn('expo_cap_cif')||25;
+    const log=calcLogistica('_cif');
+    const logTon=log/cap;
+    const intUsd=gn('expo_frete_int_usd');
+    const cambio=gn('expo_cambio')||4.0;
+    const tonInt=gn('expo_ton_frete_int')||100;
+    const intBrl=intUsd*cambio;
+    const intTon=intBrl/tonInt;
+    freteTon=r.ton+logTon+intTon;
+    detalhes=[
+      {desc:'🛣️ KM rodados',val:r.km.toLocaleString('pt-BR')+' km'},
+      {desc:'🚛 Frete Rdv / ton',val:fmt(r.ton)},
+      {desc:'⚓ Logística / ton',val:fmt(logTon)},
+      {desc:'✈️ Frete Int. (USD '+intUsd.toLocaleString('pt-BR')+' × R$'+cambio.toFixed(2)+')',val:fmt(intBrl)},
+      {desc:'✈️ Frete Internacional / ton',val:fmt(intTon)},
+      {desc:'📍 Frete Total / ton (CIF)',val:fmt(freteTon)},
+    ];
+  }
+  return {freteTon, detalhes};
+}
+
+window.expoCalcular=function(){
+  const produto   = document.getElementById('expo_produto').value;
+  const embalagem = document.getElementById('expo_embalagem').value;
+  const prazo     = parseFloat(document.getElementById('expo_prazo').value)||0;
+
+  const prodData   = D.precoSA[produto];
+  const fobProduto = prodData.fobFixo!==null ? prodData.fobFixo : D.formacaoPreco.custoMilhoBase*prodData.fator;
+  const custoProd  = D.estruturaCustos[embalagem]?.custo||0;
+  const netFob     = fobProduto+custoProd;
+
+  const {freteTon, detalhes} = expoGetFreteTon();
+
+  const taxaAnual  = D.premissas.cdi*D.premissas.custoCaptacao;
+  const taxaMensal = Math.pow(1+taxaAnual,1/12)-1;
+  const custoFin   = Math.pow(1+taxaMensal/30,prazo)-1;
+
+  // Tributos = 0 (exportação isenta)
+  const MARGEM   = 0.10;
+  const comissao = D.premissas.comissao!==undefined?D.premissas.comissao:0.02;
+  const precoSemCom = (netFob+freteTon)/(1-custoFin-MARGEM);
+  const precoFinal  = precoSemCom/(1-comissao);
+  const margem      = precoSemCom*MARGEM;
+  const vlrComissao = precoFinal*comissao;
+
+  document.getElementById('expoResultValor').textContent=fmt(precoFinal);
+  document.getElementById('expoResultSub').textContent=
+    tipoFreteExpo+' · '+prodData.label+' · '+(D.estruturaCustos[embalagem]?.label)+' · '+prazo+' dias';
+  document.getElementById('expoResultCard').style.display='block';
+
+  set('eb_custo',fmt(custoProd));
+  set('eb_fob_prod',fmt(fobProduto));
+  set('eb_net_fob',fmt(netFob));
+  set('eb_fin',fmtPct(custoFin)+' ('+prazo+'d)');
+
+  document.getElementById('eb_frete_rows').innerHTML=
+    detalhes.map(r=>`<div class="bd-row"><span class="desc">${r.desc}</span><span class="val">${r.val}</span></div>`).join('');
+
+  // Margem e comissão (diretor vê tudo, comercial não)
+  const mEl=document.getElementById('eb_margem');
+  if(mEl) mEl.textContent=fmt(margem);
+  const cEl=document.getElementById('eb_comissao');
+  if(cEl) cEl.textContent=fmtPct(comissao)+' — '+fmt(vlrComissao);
+
+  set('eb_total',fmt(precoFinal));
+  document.getElementById('expoBreakdown').style.display='block';
+  document.getElementById('expoResultCard').scrollIntoView({behavior:'smooth'});
+};
+
+function inicializarExpo(){
+  const sP=document.getElementById('expo_produto');
+  if(!sP) return;
+  sP.innerHTML='';
+  Object.entries(D.precoSA).forEach(([v,{label}])=>{
+    const o=document.createElement('option');o.value=v;o.textContent=label;
+    if(v==='fuba')o.selected=true;sP.appendChild(o);
+  });
+  const sE=document.getElementById('expo_embalagem');
+  sE.innerHTML='';
+  Object.entries(D.estruturaCustos).forEach(([v,{label}])=>{
+    const o=document.createElement('option');o.value=v;o.textContent=label;sE.appendChild(o);
+  });
+  expoFiltrarCidades();expoFiltrarCidadesFOB();expoFiltrarCidadesCIF();
+}
+
 // Inicializar
 (async()=>{
   // Mostrar app imediatamente com dados padrão
-  montarProdutos();montarEmbalagens();filtrarCidades();
+  montarProdutos();montarEmbalagens();filtrarCidades();inicializarExpo();
   document.getElementById('loading-prec').style.display='none';
   document.getElementById('form-prec').style.display='block';
   verificarLogin();
   // Atualizar com dados do Firebase em segundo plano
   try {
     await carregarFirebase();
-    montarProdutos();montarEmbalagens();filtrarCidades();
+    montarProdutos();montarEmbalagens();filtrarCidades();inicializarExpo();
   } catch(e) { console.log('Firebase indisponível, usando padrão'); }
 })();
 </script>
