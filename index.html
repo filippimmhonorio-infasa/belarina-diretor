@@ -230,6 +230,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div id="loading-prec" class="loading"><div class="spinner"></div>Carregando dados...</div>
   <div id="form-prec" style="display:none">
     <div class="content">
+      <button class="btn-voltar-menu" onclick="irPara('menu')">← Voltar ao menu</button>
       <div class="card">
         <div class="card-titulo">Produto &amp; Embalagem</div>
         <div class="card-body">
@@ -395,7 +396,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="card-titulo">Frete Rodoviário (FCA)</div>
         <div class="card-body">
           <div class="row2">
-            <div class="campo-expo"><label>UF Destino</label><select id="expo_uf" onchange="expoFiltrarCidades()"><option value="AC">Acre</option><option value="AL">Alagoas</option><option value="AM">Amazonas</option><option value="AP">Amapá</option><option value="BA">Bahia</option><option value="CE">Ceará</option><option value="DF">Distrito Federal</option><option value="ES">Espírito Santo</option><option value="GO">Goiás</option><option value="MA">Maranhão</option><option value="MG">Minas Gerais</option><option value="MS">Mato Grosso do Sul</option><option value="MT">Mato Grosso</option><option value="PA">Pará</option><option value="PB">Paraíba</option><option value="PE">Pernambuco</option><option value="PI">Piauí</option><option value="PR" selected>Paraná</option><option value="RJ">Rio de Janeiro</option><option value="RN">Rio Grande do Norte</option><option value="RO">Rondônia</option><option value="RR">Roraima</option><option value="RS">Rio Grande do Sul</option><option value="SC">Santa Catarina</option><option value="SE">Sergipe</option><option value="SP">São Paulo</option><option value="TO">Tocantins</option></select></div>
+            <div class="campo-expo"><label>UF Destino</label><select id="expo_uf" onchange="expoFiltrarCidades()">
+<option value="AL">AL</option>
+<option value="BA">BA</option>
+<option value="CE">CE</option>
+<option value="MA">MA</option>
+<option value="PE">PE</option>
+<option value="PR" selected>PR</option>
+<option value="RN">RN</option>
+<option value="RS">RS</option>
+<option value="SC">SC</option>
+<option value="SP">SP</option>
+</select></div>
             <div class="campo-expo"><label>Cidade</label><select id="expo_cidade"></select></div>
           </div>
           <div class="row2">
@@ -409,7 +421,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="card-titulo">Frete Rodoviário + Logística Portuária (FOB)</div>
         <div class="card-body">
           <div class="row2">
-            <div class="campo-expo"><label>UF Destino</label><select id="expo_uf_fob" onchange="expoFiltrarCidadesFOB()"><option value="AC">Acre</option><option value="AL">Alagoas</option><option value="AM">Amazonas</option><option value="AP">Amapá</option><option value="BA">Bahia</option><option value="CE">Ceará</option><option value="DF">Distrito Federal</option><option value="ES">Espírito Santo</option><option value="GO">Goiás</option><option value="MA">Maranhão</option><option value="MG">Minas Gerais</option><option value="MS">Mato Grosso do Sul</option><option value="MT">Mato Grosso</option><option value="PA">Pará</option><option value="PB">Paraíba</option><option value="PE">Pernambuco</option><option value="PI">Piauí</option><option value="PR" selected>Paraná</option><option value="RJ">Rio de Janeiro</option><option value="RN">Rio Grande do Norte</option><option value="RO">Rondônia</option><option value="RR">Roraima</option><option value="RS">Rio Grande do Sul</option><option value="SC">Santa Catarina</option><option value="SE">Sergipe</option><option value="SP">São Paulo</option><option value="TO">Tocantins</option></select></div>
+            <div class="campo-expo"><label>UF Destino</label><select id="expo_uf_fob" onchange="expoFiltrarCidadesFOB()">
+<option value="AL">AL</option>
+<option value="BA">BA</option>
+<option value="CE">CE</option>
+<option value="MA">MA</option>
+<option value="PE">PE</option>
+<option value="PR" selected>PR</option>
+<option value="RN">RN</option>
+<option value="RS">RS</option>
+<option value="SC">SC</option>
+<option value="SP">SP</option>
+</select></div>
             <div class="campo-expo"><label>Cidade</label><select id="expo_cidade_fob"></select></div>
           </div>
           <div class="row2">
@@ -436,7 +459,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="card-titulo">Frete Internacional (CIF) — além de todos os custos FOB</div>
         <div class="card-body">
           <div class="row2">
-            <div class="campo-expo"><label>UF Destino</label><select id="expo_uf_cif" onchange="expoFiltrarCidadesCIF()"><option value="AC">Acre</option><option value="AL">Alagoas</option><option value="AM">Amazonas</option><option value="AP">Amapá</option><option value="BA">Bahia</option><option value="CE">Ceará</option><option value="DF">Distrito Federal</option><option value="ES">Espírito Santo</option><option value="GO">Goiás</option><option value="MA">Maranhão</option><option value="MG">Minas Gerais</option><option value="MS">Mato Grosso do Sul</option><option value="MT">Mato Grosso</option><option value="PA">Pará</option><option value="PB">Paraíba</option><option value="PE">Pernambuco</option><option value="PI">Piauí</option><option value="PR" selected>Paraná</option><option value="RJ">Rio de Janeiro</option><option value="RN">Rio Grande do Norte</option><option value="RO">Rondônia</option><option value="RR">Roraima</option><option value="RS">Rio Grande do Sul</option><option value="SC">Santa Catarina</option><option value="SE">Sergipe</option><option value="SP">São Paulo</option><option value="TO">Tocantins</option></select></div>
+            <div class="campo-expo"><label>UF Destino</label><select id="expo_uf_cif" onchange="expoFiltrarCidadesCIF()">
+<option value="AL">AL</option>
+<option value="BA">BA</option>
+<option value="CE">CE</option>
+<option value="MA">MA</option>
+<option value="PE">PE</option>
+<option value="PR" selected>PR</option>
+<option value="RN">RN</option>
+<option value="RS">RS</option>
+<option value="SC">SC</option>
+<option value="SP">SP</option>
+</select></div>
             <div class="campo-expo"><label>Cidade</label><select id="expo_cidade_cif"></select></div>
           </div>
           <div class="row2">
@@ -858,6 +892,7 @@ window.irPara=function(destino){
 // ── EXPORTAÇÃO ───────────────────────────────────────────────────────────────
 let tipoFreteExpo='EXW';
 
+const PORTOS_EXPO = {"CE": ["Fortaleza"], "MA": ["São Luís"], "AL": ["Maceió"], "RN": ["Natal"], "PE": ["Recife"], "BA": ["Salvador", "Ilhéus"], "SP": ["Santos"], "SC": ["Itajaí", "São Francisco do Sul", "Imbituba"], "PR": ["Paranaguá"], "RS": ["Porto Alegre"]};
 window.selecionarFreteExpo=function(tipo){
   tipoFreteExpo=tipo;
   ['EXW','FCA','FOB','CIF'].forEach(t=>{
@@ -874,7 +909,7 @@ function expoPopularCidades(ufId, cidadeId){
   const sel=document.getElementById(cidadeId);
   if(!sel) return;
   sel.innerHTML='';
-  (D.frete.distancias[uf]||[]).forEach(({cidade})=>{
+  (PORTOS_EXPO[uf]||[]).forEach(cidade=>{
     const o=document.createElement('option');o.value=cidade;o.textContent=cidade;sel.appendChild(o);
   });
 }
