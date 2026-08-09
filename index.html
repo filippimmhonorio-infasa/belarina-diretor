@@ -395,24 +395,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="card" id="cardExpoFCA" style="display:none">
         <div class="card-titulo">Frete Rodoviário (FCA)</div>
         <div class="card-body">
-          <div class="row2">
-            <div class="campo-expo"><label>UF Destino</label><select id="expo_uf" onchange="expoFiltrarCidades()">
-<option value="AL">AL</option>
-<option value="BA">BA</option>
-<option value="CE">CE</option>
-<option value="MA">MA</option>
-<option value="PE">PE</option>
-<option value="PR" selected>PR</option>
-<option value="RN">RN</option>
-<option value="RS">RS</option>
-<option value="SC">SC</option>
-<option value="SP">SP</option>
-</select></div>
-            <div class="campo-expo"><label>Cidade</label><select id="expo_cidade"></select></div>
-          </div>
-          <div class="row2">
-            <div class="campo-expo"><label>Pedágio (R$)</label><input type="number" id="expo_pedagio" value="0" step="10" inputmode="decimal"></div>
-            <div class="campo-expo"><label>Capacidade (ton)</label><input type="number" id="expo_capacidade" value="25" min="1" inputmode="decimal"></div>
+          <div class="campo-expo">
+            <label>Frete Rodoviário (R$/ton)</label>
+            <input type="number" id="expo_frete_rdv_fca" value="0" step="1" inputmode="decimal" placeholder="Ex: 470">
           </div>
         </div>
       </div>
@@ -421,23 +406,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="card-titulo">Frete Rodoviário + Logística Portuária (FOB)</div>
         <div class="card-body">
           <div class="row2">
-            <div class="campo-expo"><label>UF Destino</label><select id="expo_uf_fob" onchange="expoFiltrarCidadesFOB()">
-<option value="AL">AL</option>
-<option value="BA">BA</option>
-<option value="CE">CE</option>
-<option value="MA">MA</option>
-<option value="PE">PE</option>
-<option value="PR" selected>PR</option>
-<option value="RN">RN</option>
-<option value="RS">RS</option>
-<option value="SC">SC</option>
-<option value="SP">SP</option>
-</select></div>
-            <div class="campo-expo"><label>Cidade</label><select id="expo_cidade_fob"></select></div>
-          </div>
-          <div class="row2">
-            <div class="campo-expo"><label>Pedágio (R$)</label><input type="number" id="expo_pedagio_fob" value="0" step="10" inputmode="decimal"></div>
-            <div class="campo-expo"><label>Capacidade (ton/cntr)</label><input type="number" id="expo_cap_fob" value="25" min="1" inputmode="decimal"></div>
+            <div class="campo-expo">
+              <label>Frete Rodoviário (R$/ton)</label>
+              <input type="number" id="expo_frete_rdv_fob" value="0" step="1" inputmode="decimal" placeholder="Ex: 470">
+            </div>
+            <div class="campo-expo">
+              <label>Capacidade (ton/cntr)</label>
+              <input type="number" id="expo_cap_fob" value="25" min="1" inputmode="decimal">
+            </div>
           </div>
           <div class="secao-expo">Logística e Serviços Portuários (R$ por container)</div>
           <div class="row2">
@@ -459,23 +435,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="card-titulo">Frete Internacional (CIF) — além de todos os custos FOB</div>
         <div class="card-body">
           <div class="row2">
-            <div class="campo-expo"><label>UF Destino</label><select id="expo_uf_cif" onchange="expoFiltrarCidadesCIF()">
-<option value="AL">AL</option>
-<option value="BA">BA</option>
-<option value="CE">CE</option>
-<option value="MA">MA</option>
-<option value="PE">PE</option>
-<option value="PR" selected>PR</option>
-<option value="RN">RN</option>
-<option value="RS">RS</option>
-<option value="SC">SC</option>
-<option value="SP">SP</option>
-</select></div>
-            <div class="campo-expo"><label>Cidade</label><select id="expo_cidade_cif"></select></div>
-          </div>
-          <div class="row2">
-            <div class="campo-expo"><label>Pedágio (R$)</label><input type="number" id="expo_pedagio_cif" value="0" step="10" inputmode="decimal"></div>
-            <div class="campo-expo"><label>Capacidade (ton/cntr)</label><input type="number" id="expo_cap_cif" value="25" min="1" inputmode="decimal"></div>
+            <div class="campo-expo">
+              <label>Frete Rodoviário (R$/ton)</label>
+              <input type="number" id="expo_frete_rdv_cif" value="0" step="1" inputmode="decimal" placeholder="Ex: 470">
+            </div>
+            <div class="campo-expo">
+              <label>Capacidade (ton/cntr)</label>
+              <input type="number" id="expo_cap_cif" value="25" min="1" inputmode="decimal">
+            </div>
           </div>
           <div class="secao-expo">Logística e Serviços Portuários (R$ por container)</div>
           <div class="row2">
@@ -950,30 +917,26 @@ function expoGetFreteTon(){
     detalhes=[{desc:'🚚 Frete (EXW)',val:'R$ 0,00 — por conta do comprador'}];
 
   }else if(tipoFreteExpo==='FCA'){
-    const r=calcFreteRdv('expo_uf','expo_cidade','expo_pedagio','expo_capacidade');
-    freteTon=r.ton;
+    freteTon=gn('expo_frete_rdv_fca');
     detalhes=[
-      {desc:'🛣️ KM rodados',val:r.km.toLocaleString('pt-BR')+' km'},
-      {desc:'🚛 Frete Total (FCA)',val:fmt(r.total)},
-      {desc:'📍 Frete / ton',val:fmt(r.ton)},
+      {desc:'🚛 Frete Rodoviário / ton (FCA)',val:fmt(freteTon)},
     ];
 
   }else if(tipoFreteExpo==='FOB'){
-    const r=calcFreteRdv('expo_uf_fob','expo_cidade_fob','expo_pedagio_fob','expo_cap_fob');
+    const freteRdvTon=gn('expo_frete_rdv_fob');
     const cap=gn('expo_cap_fob')||25;
     const log=calcLogistica('');
     const logTon=log/cap;
-    freteTon=r.ton+logTon;
+    freteTon=freteRdvTon+logTon;
     detalhes=[
-      {desc:'🛣️ KM rodados',val:r.km.toLocaleString('pt-BR')+' km'},
-      {desc:'🚛 Frete Rdv / ton',val:fmt(r.ton)},
+      {desc:'🚛 Frete Rodoviário / ton',val:fmt(freteRdvTon)},
       {desc:'⚓ Logística Portuária total',val:fmt(log)},
       {desc:'⚓ Logística / ton',val:fmt(logTon)},
       {desc:'📍 Frete Total / ton (FOB)',val:fmt(freteTon)},
     ];
 
   }else if(tipoFreteExpo==='CIF'){
-    const r=calcFreteRdv('expo_uf_cif','expo_cidade_cif','expo_pedagio_cif','expo_cap_cif');
+    const freteRdvTon=gn('expo_frete_rdv_cif');
     const cap=gn('expo_cap_cif')||25;
     const log=calcLogistica('_cif');
     const logTon=log/cap;
@@ -982,10 +945,9 @@ function expoGetFreteTon(){
     const tonInt=gn('expo_ton_frete_int')||100;
     const intBrl=intUsd*cambio;
     const intTon=intBrl/tonInt;
-    freteTon=r.ton+logTon+intTon;
+    freteTon=freteRdvTon+logTon+intTon;
     detalhes=[
-      {desc:'🛣️ KM rodados',val:r.km.toLocaleString('pt-BR')+' km'},
-      {desc:'🚛 Frete Rdv / ton',val:fmt(r.ton)},
+      {desc:'🚛 Frete Rodoviário / ton',val:fmt(freteRdvTon)},
       {desc:'⚓ Logística / ton',val:fmt(logTon)},
       {desc:'✈️ Frete Int. (USD '+intUsd.toLocaleString('pt-BR')+' × R$'+cambio.toFixed(2)+')',val:fmt(intBrl)},
       {desc:'✈️ Frete Internacional / ton',val:fmt(intTon)},
