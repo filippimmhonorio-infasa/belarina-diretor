@@ -803,7 +803,6 @@ function gerarForm(tipo){
     Object.entries(D.cargaTrib.pisCofins.outros).forEach(([k,v])=>{h+=c(CLABEL[k]||k,'ct_po_'+k,(v*100).toFixed(3),'','%','');});
     h+=sec('Gérmen de Milho');
     h+=c('Carga Tributária Total','ct_germe',(D.cargaTrib.germe*100).toFixed(3),'','%','');
-  }
   }else if(tipo==='portosExpo'){
     h+=sec('Tarifas de Frete por Porto (R$/ton)');
     const portos=D.portosExpo||{};
@@ -815,6 +814,7 @@ function gerarForm(tipo){
       });
     });
     h+=`<button class="btn-salvar" onclick="salvarModal()">💾 Salvar no Firebase</button>`;
+  }
   return h;
 }
 
