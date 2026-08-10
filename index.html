@@ -555,7 +555,7 @@ const app=initializeApp({apiKey:"AIzaSyCdOfDyGw1jJ8jetIWwIC6qtslzxhD7GKw",authDo
 const db=getFirestore(app);
 
 const PADRAO={
-  premissas:{cdi:0.144,custoCaptacao:1.10,comissao:0.02,senha:'1234',usuarioDir:'diretor',senhaDir:'belarina2025'},
+  premissas:{cdi:0.144,custoCaptacao:1.10,comissao:0.02,senha:'1234',usuarioDir:'diretor',senhaDir:'belarina2025',usuarioExp:'exportacao',senhaExp:'belarina@exp'},
   formacaoPreco:{custoMilhoBase:1065.6620513970588},
   precoSA:{milho_deg:{label:'Milho Degerminado',fator:1.00,fobFixo:null},canjicao:{label:'Canjicão',fator:1.10,fobFixo:null},canjica:{label:'Canjica',fator:1.10,fobFixo:null},gritz_grosso:{label:'Gritz Grosso',fator:1.05,fobFixo:null},gritz_medio:{label:'Gritz Médio',fator:1.05,fobFixo:null},gritz_fino:{label:'Gritz Fino',fator:1.05,fobFixo:null},fuba:{label:'Fubá',fator:0.95,fobFixo:null},germe:{label:'Gérmen de Milho',fator:null,fobFixo:677.44}},
   estruturaCustos:{granel:{label:'Granel',custo:99.989},sacaria_25:{label:'Sacaria 25kg',custo:145.987},sacaria_50:{label:'Sacaria 50kg',custo:145.987},big_bag:{label:'Big Bag',custo:125.987}},
@@ -863,7 +863,7 @@ const gs=(id)=>{const el=document.getElementById(id);return el?el.value:'';};
 
 window.salvarModal=async function(){
   const tipo=modalAtual;let novos={};
-  if(tipo==='premissas'){novos={cdi:gv('p_cdi')/100,custoCaptacao:gv('p_cap')/100,comissao:gv('p_com')/100,senha:gs('p_senha'),usuarioDir:gs('p_udir'),senhaDir:gs('p_sdir'),usuarioCom:gs('p_ucom'),senhaCom:gs('p_scom')};}
+  if(tipo==='premissas'){novos={cdi:gv('p_cdi')/100,custoCaptacao:gv('p_cap')/100,comissao:gv('p_com')/100,senha:gs('p_senha'),usuarioDir:gs('p_udir'),senhaDir:gs('p_sdir'),usuarioCom:gs('p_ucom'),senhaCom:gs('p_scom'),usuarioExp:gs('p_uexp'),senhaExp:gs('p_sexp')};}
   else if(tipo==='formacaoPreco'){novos={custoMilhoBase:gv('fp_c')};}
   else if(tipo==='precoSA'){
     novos=JSON.parse(JSON.stringify(D.precoSA));
