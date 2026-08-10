@@ -1121,7 +1121,7 @@ async function buscarPTAX() {
     const valores = json?.value;
     if(valores && valores.length > 0){
       const ptax = valores[valores.length-1].cotacaoVenda;
-      const taxa = Math.round((ptax - 0.05) * 100) / 100;
+      const taxa = Math.round((ptax - 0.05) * 10000) / 10000;
       return taxa;
     }
   } catch(e){ console.log('PTAX indisponível:', e.message); }
@@ -1134,8 +1134,8 @@ async function preencherPTAX(inputId) {
   inp.placeholder = 'Buscando PTAX...';
   const taxa = await buscarPTAX();
   if(taxa !== null){
-    inp.value = taxa.toFixed(2);
-    inp.title = `PTAX do dia - R$ 0,05 = R$ ${taxa.toFixed(2)}`;
+    inp.value = taxa.toFixed(4);
+    inp.title = `PTAX do dia - R$ 0,05 = R$ ${taxa.toFixed(4)}`;
   } else {
     inp.placeholder = '5.37 (PTAX indisponível)';
   }
