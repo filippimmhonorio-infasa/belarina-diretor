@@ -86,7 +86,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .pb{height:32px;}
 
 /* LOGIN */
-.login-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--azul);padding:24px;}
+.login-page{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:var(--azul);padding:24px;position:fixed;inset:0;z-index:999;overflow-y:auto;}
 .login-card{background:var(--branco);border-radius:20px;padding:32px 24px;width:100%;max-width:380px;display:flex;flex-direction:column;align-items:center;gap:20px;}
 .login-logo{height:50px;margin-bottom:4px;}
 .login-titulo{font-size:18px;font-weight:800;color:var(--azul);}
@@ -604,7 +604,9 @@ window.mostrarApp=function(){
   document.getElementById('loginPage').style.display='none';
   document.getElementById('appContent').style.display='block';
   if(document.getElementById('appTabs'))document.getElementById('appTabs').style.display='flex';
-  document.querySelectorAll('.page').forEach((p,i)=>{ if(i===0) p.classList.add('ativo'); });
+  // Garantir que todas as pages estão desativadas e só o menu aparece
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('ativo'));
+  document.getElementById('page-menu')?.classList.add('ativo');
 }
 
 async function carregarFirebase(){
