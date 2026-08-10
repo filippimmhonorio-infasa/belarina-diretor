@@ -334,6 +334,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="cad-item" onclick="abrirModal('precoSA')"><div class="cad-icone">🏷️</div><div class="cad-texto"><div class="cad-titulo">Preço S.A. (Derivação)</div><div class="cad-desc">Fatores e FOB fixo por produto</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
       <div class="cad-item" onclick="abrirModal('estruturaCustos')"><div class="cad-icone">📦</div><div class="cad-texto"><div class="cad-titulo">Estrutura de Custos</div><div class="cad-desc">Custo de produção por embalagem</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
       <div class="cad-item" onclick="abrirModal('frete')"><div class="cad-icone">🚛</div><div class="cad-texto"><div class="cad-titulo">Frete</div><div class="cad-desc">ANTT, margem, distâncias e novas cidades</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
+      <div class="cad-item" onclick="abrirModal('portosExpo')"><div class="cad-icone">⚓</div><div class="cad-texto"><div class="cad-titulo">Portos de Exportação</div><div class="cad-desc">Tarifas de frete por porto de destino</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
       <div class="cad-item" onclick="abrirModal('cargaTrib')"><div class="cad-icone">🧾</div><div class="cad-texto"><div class="cad-titulo">Carga Tributária</div><div class="cad-desc">ICMS, FUNDEIC, PIS/COFINS por produto e UF</div></div><div style="font-size:22px;color:var(--muted)">›</div></div>
     </div>
     <div class="pb"></div>
@@ -395,9 +396,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="card" id="cardExpoFCA" style="display:none">
         <div class="card-titulo">Frete Rodoviário (FCA)</div>
         <div class="card-body">
+          <div class="row2">
+            <div class="campo-expo">
+              <label>UF do Porto</label>
+              <select id="expo_uf" onchange="expoFiltrarCidades()">
+                <option value="AL">AL</option><option value="BA">BA</option><option value="CE">CE</option>
+                <option value="MA">MA</option><option value="PE">PE</option><option value="PR" selected>PR</option>
+                <option value="RN">RN</option><option value="RS">RS</option><option value="SC">SC</option><option value="SP">SP</option>
+              </select>
+            </div>
+            <div class="campo-expo">
+              <label>Porto de Destino</label>
+              <select id="expo_porto_fca" onchange="expoAtualizarPortoFCA()"></select>
+            </div>
+          </div>
           <div class="campo-expo">
-            <label>Frete Rodoviário (R$/ton)</label>
-            <input type="number" id="expo_frete_rdv_fca" value="0" step="1" inputmode="decimal" placeholder="Ex: 470">
+            <label>Frete Rodoviário (R$/ton) — editável</label>
+            <input type="number" id="expo_frete_rdv_fca" value="470" step="1" inputmode="decimal">
           </div>
         </div>
       </div>
@@ -407,8 +422,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="card-body">
           <div class="row2">
             <div class="campo-expo">
-              <label>Frete Rodoviário (R$/ton)</label>
-              <input type="number" id="expo_frete_rdv_fob" value="0" step="1" inputmode="decimal" placeholder="Ex: 470">
+              <label>UF do Porto</label>
+              <select id="expo_uf_fob" onchange="expoFiltrarCidadesFOB()">
+                <option value="AL">AL</option><option value="BA">BA</option><option value="CE">CE</option>
+                <option value="MA">MA</option><option value="PE">PE</option><option value="PR" selected>PR</option>
+                <option value="RN">RN</option><option value="RS">RS</option><option value="SC">SC</option><option value="SP">SP</option>
+              </select>
+            </div>
+            <div class="campo-expo">
+              <label>Porto de Destino</label>
+              <select id="expo_porto_fob" onchange="expoAtualizarPortoFOB()"></select>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="campo-expo">
+              <label>Frete Rodoviário (R$/ton) — editável</label>
+              <input type="number" id="expo_frete_rdv_fob" value="470" step="1" inputmode="decimal">
             </div>
             <div class="campo-expo">
               <label>Capacidade (ton/cntr)</label>
@@ -436,8 +465,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="card-body">
           <div class="row2">
             <div class="campo-expo">
-              <label>Frete Rodoviário (R$/ton)</label>
-              <input type="number" id="expo_frete_rdv_cif" value="0" step="1" inputmode="decimal" placeholder="Ex: 470">
+              <label>UF do Porto</label>
+              <select id="expo_uf_cif" onchange="expoFiltrarCidadesCIF()">
+                <option value="AL">AL</option><option value="BA">BA</option><option value="CE">CE</option>
+                <option value="MA">MA</option><option value="PE">PE</option><option value="PR" selected>PR</option>
+                <option value="RN">RN</option><option value="RS">RS</option><option value="SC">SC</option><option value="SP">SP</option>
+              </select>
+            </div>
+            <div class="campo-expo">
+              <label>Porto de Destino</label>
+              <select id="expo_porto_cif" onchange="expoAtualizarPortoCIF()"></select>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="campo-expo">
+              <label>Frete Rodoviário (R$/ton) — editável</label>
+              <input type="number" id="expo_frete_rdv_cif" value="470" step="1" inputmode="decimal">
             </div>
             <div class="campo-expo">
               <label>Capacidade (ton/cntr)</label>
@@ -459,10 +502,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           </div>
           <div class="secao-expo">Frete Internacional</div>
           <div class="row2">
-            <div class="campo-expo"><label>Frete Internacional (USD)</label><input type="number" id="expo_frete_int_usd" value="4466" inputmode="decimal"></div>
-            <div class="campo-expo"><label>Taxa do Dólar (R$/USD)</label><input type="number" id="expo_cambio" value="4.00" step="0.01" inputmode="decimal"></div>
+            <div class="campo-expo"><label>Frete Internacional por Cntr (USD)</label><input type="number" id="expo_frete_int_usd" value="4466" inputmode="decimal"></div>
+            <div class="campo-expo"><label>Qtd. Containers</label><input type="number" id="expo_qtd_cntr" value="1" min="1" inputmode="numeric"></div>
           </div>
-          <div class="campo-expo"><label>Toneladas base frete internacional</label><input type="number" id="expo_ton_frete_int" value="100" inputmode="decimal"></div>
+          <div class="row2">
+            <div class="campo-expo"><label>Taxa do Dólar (R$/USD)</label><input type="number" id="expo_cambio" value="5.37" step="0.01" inputmode="decimal"></div>
+            <div class="campo-expo"><label>Toneladas base frete internacional</label><input type="number" id="expo_ton_frete_int" value="100" inputmode="decimal"></div>
+          </div>
         </div>
       </div>
 
@@ -489,7 +535,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="bd-row dest"><span class="desc">📊 Preço NET FOB</span><span class="val" id="eb_net_fob">—</span></div>
         <div id="eb_frete_rows"></div>
         <div class="bd-row"><span class="desc">⏱ Custo Financeiro (Lead Time)</span><span class="val" id="eb_fin">—</span></div>
-        <div class="bd-row"><span class="desc">🌍 Tributos (Exportação)</span><span class="val">0,00% — isento</span></div>
+        <div class="bd-row"><span class="desc">🌍 Tributos (Exportação)</span><span class="val">0,00% — imune</span></div>
         
         <div class="bd-row"><span class="desc">📈 Margem (10%)</span><span class="val" id="eb_margem">—</span></div>
         <div class="bd-row" id="eb_comissao_row"><span class="desc">🤝 Comissão</span><span class="val" id="eb_comissao">—</span></div>
@@ -513,13 +559,14 @@ const PADRAO={
   formacaoPreco:{custoMilhoBase:1065.6620513970588},
   precoSA:{milho_deg:{label:'Milho Degerminado',fator:1.00,fobFixo:null},canjicao:{label:'Canjicão',fator:1.10,fobFixo:null},canjica:{label:'Canjica',fator:1.10,fobFixo:null},gritz_grosso:{label:'Gritz Grosso',fator:1.05,fobFixo:null},gritz_medio:{label:'Gritz Médio',fator:1.05,fobFixo:null},gritz_fino:{label:'Gritz Fino',fator:1.05,fobFixo:null},fuba:{label:'Fubá',fator:0.95,fobFixo:null},germe:{label:'Gérmen de Milho',fator:null,fobFixo:677.44}},
   estruturaCustos:{granel:{label:'Granel',custo:99.989},sacaria_25:{label:'Sacaria 25kg',custo:145.987},sacaria_50:{label:'Sacaria 50kg',custo:145.987},big_bag:{label:'Big Bag',custo:125.987}},
-  frete:{antt:7.8952,cargaDescarga:803.22,margem:0.10,icmsFrete:0.12,distancias:{MT:[{cidade:'Cuiabá',km:0},{cidade:'Várzea Grande',km:8},{cidade:'Rondonópolis',km:212},{cidade:'Sorriso',km:500},{cidade:'Sinop',km:503}],MS:[{cidade:'Corumbá',km:426},{cidade:'Campo Grande',km:694},{cidade:'Três Lagoas',km:985},{cidade:'Dourados',km:935}],GO:[{cidade:'Rio Verde',km:731},{cidade:'Goiânia',km:892},{cidade:'Aparecida de Goiânia',km:895},{cidade:'Anápolis',km:926}],RO:[{cidade:'Vilhena',km:735},{cidade:'Cacoal',km:892},{cidade:'Ji-Paraná',km:981},{cidade:'Ariquemes',km:1108},{cidade:'Porto Velho',km:1452}],SP:[{cidade:'Presidente Prudente',km:1294},{cidade:'São José do Rio Preto',km:1329},{cidade:'Bauru',km:1432},{cidade:'Franca',km:1454},{cidade:'Ribeirão Preto',km:1456},{cidade:'Piracicaba',km:1550},{cidade:'Campinas',km:1590},{cidade:'Sorocaba',km:1607},{cidade:'Osasco',km:1653},{cidade:'São Paulo',km:1658},{cidade:'Guarulhos',km:1660},{cidade:'Santo André',km:1662},{cidade:'São Bernardo do Campo',km:1662},{cidade:'São José dos Campos',km:1681},{cidade:'Santos',km:1700}],PR:[{cidade:'Maringá',km:1282},{cidade:'Apucarana',km:1299},{cidade:'Londrina',km:1250},{cidade:'Campo Mourão',km:1310},{cidade:'Cascavel',km:1345},{cidade:'Foz do Iguaçu',km:1426},{cidade:'Guarapuava',km:1487},{cidade:'Ponta Grossa',km:1519},{cidade:'Pato Branco',km:1530},{cidade:'Curitiba',km:1598}],SC:[{cidade:'Chapecó',km:1623},{cidade:'Joinville',km:1697},{cidade:'Blumenau',km:1742},{cidade:'Itajaí',km:1763},{cidade:'Florianópolis',km:1826},{cidade:'Criciúma',km:1893}],RS:[{cidade:'Santa Maria',km:1879},{cidade:'Caxias do Sul',km:1887},{cidade:'Novo Hamburgo',km:1947},{cidade:'Canoas',km:1970},{cidade:'Porto Alegre',km:1982},{cidade:'Pelotas',km:2127}],MG:[{cidade:'Uberlândia',km:1030},{cidade:'Uberaba',km:1103},{cidade:'Montes Claros',km:1435},{cidade:'Belo Horizonte',km:1485},{cidade:'Ipatinga',km:1609},{cidade:'Juiz de Fora',km:1613},{cidade:'Governador Valadares',km:1652}],RJ:[{cidade:'Volta Redonda',km:1692},{cidade:'Nova Iguaçu',km:1762},{cidade:'Petrópolis',km:1779},{cidade:'Duque de Caxias',km:1765},{cidade:'Niterói',km:1800},{cidade:'Rio de Janeiro',km:1795},{cidade:'Macaé',km:1895},{cidade:'Campos dos Goytacazes',km:1912}],ES:[{cidade:'Cachoeiro de Itapemirim',km:1876},{cidade:'Cariacica',km:1928},{cidade:'Serra',km:1935},{cidade:'Vila Velha',km:1942},{cidade:'Vitória',km:1940}],BA:[{cidade:'Barreiras',km:1427},{cidade:'Vitória da Conquista',km:1881},{cidade:'Eunápolis',km:2013},{cidade:'Porto Seguro',km:2075},{cidade:'Feira de Santana',km:2138},{cidade:'Salvador',km:2172}],TO:[{cidade:'Gurupi',km:1027},{cidade:'Palmas',km:1202},{cidade:'Araguaína',km:1438}],PA:[{cidade:'Parauapebas',km:1642},{cidade:'Marabá',km:1776},{cidade:'Altamira',km:1857},{cidade:'Santarém',km:1895},{cidade:'Belém',km:2265},{cidade:'Ananindeua',km:2268}],AM:[{cidade:'Itacoatiara',km:1912},{cidade:'Parintins',km:1957},{cidade:'Manaus',km:1975}],AC:[{cidade:'Rio Branco',km:1957},{cidade:'Cruzeiro do Sul',km:2688}],AP:[{cidade:'Macapá',km:2317}],RR:[{cidade:'Rorainópolis',km:2463},{cidade:'Boa Vista',km:2715}],DF:[{cidade:'Brasília',km:1005}],AL:[{cidade:'Arapiraca',km:2416},{cidade:'Maceió',km:2515}],CE:[{cidade:'Crato',km:2248},{cidade:'Juazeiro do Norte',km:2259},{cidade:'Sobral',km:2381},{cidade:'Fortaleza',km:2541}],MA:[{cidade:'Imperatriz',km:1693},{cidade:'Timon',km:2140},{cidade:'São Luís',km:2226}],PB:[{cidade:'Campina Grande',km:2580},{cidade:'João Pessoa',km:2690}],PE:[{cidade:'Petrolina',km:2030},{cidade:'Caruaru',km:2538},{cidade:'Recife',km:2665}],PI:[{cidade:'Picos',km:2086},{cidade:'Teresina',km:2097},{cidade:'Parnaíba',km:2350}],RN:[{cidade:'Mossoró',km:2542},{cidade:'Natal',km:2714}],SE:[{cidade:'Aracaju',km:2299}]}},
+  frete:{antt:7.8952,cargaDescarga:803.22,margem:0.10,icmsFrete:0.12,distancias:{MT:[{cidade:'Cuiabá',km:0},{cidade:'Várzea Grande',km:8},{cidade:'Rondonópolis',km:212},{cidade:'Sorriso',km:500},{cidade:'Sinop',km:503}],MS:[{cidade:'Corumbá',km:426},{cidade:'Campo Grande',km:694},{cidade:'Três Lagoas',km:985},{cidade:'Dourados',km:935}],GO:[{cidade:'Rio Verde',km:731},{cidade:'Goiânia',km:892},{cidade:'Aparecida de Goiânia',km:895},{cidade:'Anápolis',km:926}],RO:[{cidade:'Vilhena',km:735},{cidade:'Cacoal',km:892},{cidade:'Ji-Paraná',km:981},{cidade:'Ariquemes',km:1108},{cidade:'Porto Velho',km:1452}],SP:[{cidade:'Presidente Prudente',km:1294},{cidade:'São José do Rio Preto',km:1329},{cidade:'Bauru',km:1432},{cidade:'Franca',km:1454},{cidade:'Ribeirão Preto',km:1456},{cidade:'Piracicaba',km:1550},{cidade:'Campinas',km:1590},{cidade:'Sorocaba',km:1607},{cidade:'Osasco',km:1653},{cidade:'São Paulo',km:1658},{cidade:'Guarulhos',km:1660},{cidade:'Santo André',km:1662},{cidade:'São Bernardo do Campo',km:1662},{cidade:'São José dos Campos',km:1681},{cidade:'Santos',km:1700}],PR:[{cidade:'Maringá',km:1282},{cidade:'Apucarana',km:1299},{cidade:'Londrina',km:1250},{cidade:'Campo Mourão',km:1310},{cidade:'Cascavel',km:1345},{cidade:'Foz do Iguaçu',km:1426},{cidade:'Guarapuava',km:1487},{cidade:'Ponta Grossa',km:1519},{cidade:'Pato Branco',km:1530},{cidade:'Curitiba',km:1598}],SC:[{cidade:'Chapecó',km:1623},{cidade:'Joinville',km:1697},{cidade:'Blumenau',km:1742},{cidade:'Itajaí',km:1763},{cidade:'Florianópolis',km:1826},{cidade:'Criciúma',km:1893}],RS:[{cidade:'Santa Maria',km:1879},{cidade:'Caxias do Sul',km:1887},{cidade:'Novo Hamburgo',km:1947},{cidade:'Canoas',km:1970},{cidade:'Porto Alegre',km:1982},{cidade:'Pelotas',km:2127}],MG:[{cidade:'Uberlândia',km:1030},{cidade:'Uberaba',km:1103},{cidade:'Montes Claros',km:1435},{cidade:'Belo Horizonte',km:1485},{cidade:'Ipatinga',km:1609},{cidade:'Juiz de Fora',km:1613},{cidade:'Governador Valadares',km:1652}],RJ:[{cidade:'Volta Redonda',km:1692},{cidade:'Nova Iguaçu',km:1762},{cidade:'Petrópolis',km:1779},{cidade:'Duque de Caxias',km:1765},{cidade:'Niterói',km:1800},{cidade:'Rio de Janeiro',km:1795},{cidade:'Macaé',km:1895},{cidade:'Campos dos Goytacazes',km:1912}],ES:[{cidade:'Cachoeiro de Itapemirim',km:1876},{cidade:'Cariacica',km:1928},{cidade:'Serra',km:1935},{cidade:'Vila Velha',km:1942},{cidade:'Vitória',km:1940}],BA:[{cidade:'Barreiras',km:1427},{cidade:'Vitória da Conquista',km:1881},{cidade:'Eunápolis',km:2013},{cidade:'Porto Seguro',km:2075},{cidade:'Feira de Santana',km:2138},{cidade:'Salvador',km:2172}],TO:[{cidade:'Gurupi',km:1027},{cidade:'Palmas',km:1202},{cidade:'Araguaína',km:1438}],PA:[{cidade:'Parauapebas',km:1642},{cidade:'Marabá',km:1776},{cidade:'Altamira',km:1857},{cidade:'Santarém',km:1895},{cidade:'Belém',km:2265},{cidade:'Ananindeua',km:2268}],AM:[{cidade:'Itacoatiara',km:1912},{cidade:'Parintins',km:1957},{cidade:'Manaus',km:1975}],AC:[{cidade:'Rio Branco',km:1957},{cidade:'Cruzeiro do Sul',km:2688}],AP:[{cidade:'Macapá',km:2317}],RR:[{cidade:'Rorainópolis',km:2463},{cidade:'Boa Vista',km:2715}],DF:[{cidade:'Brasília',km:1005}],AL:[{cidade:'Arapiraca',km:2416},{cidade:'Maceió',km:2515}],CE:[{cidade:'Crato',km:2248},{cidade:'Juazeiro do Norte',km:2259},{cidade:'Sobral',km:2381},{cidade:'Fortaleza',km:2541}],MA:[{cidade:'Imperatriz',km:1693},{cidade:'Timon',km:2140},{cidade:'São Luís',km:2226}],PB:[{cidade:'Campina Grande',km:2580},{cidade:'João Pessoa',km:2690}],PE:[{cidade:'Petrolina',km:2030},{cidade:'Caruaru',km:2538},{cidade:'Recife',km:2665}],PI:[{cidade:'Picos',km:2086},{cidade:'Teresina',km:2097},{cidade:'Parnaíba',km:2350}],RN:[{cidade:'Mossoró',km:2542},{cidade:'Natal',km:2714}],SE:[{cidade:'Aracaju',km:2299}]}},,
+  portosExpo:{AL:[{porto:'Maceió',frete_ton:520}],BA:[{porto:'Salvador',frete_ton:480},{porto:'Ilhéus',frete_ton:490}],CE:[{porto:'Fortaleza',frete_ton:560}],MA:[{porto:'São Luís',frete_ton:540}],PE:[{porto:'Recife',frete_ton:510}],PR:[{porto:'Paranaguá',frete_ton:470}],RN:[{porto:'Natal',frete_ton:550}],RS:[{porto:'Porto Alegre',frete_ton:500}],SC:[{porto:'Itajaí',frete_ton:485},{porto:'São Francisco do Sul',frete_ton:488},{porto:'Imbituba',frete_ton:492}],SP:[{porto:'Santos',frete_ton:470}]},
   cargaTrib:{icms:{MT_fuba:0.030,MT_outros:0.0425,outros:0.024},fund:{MT_fuba:0.0063,MT_outros:0.0089,outros:0.0067},pisCofins:{fuba:{mineracao:0.0814,ind_cervejeira:0.0814,ind_racao:0.0,varejo:0.0,varejo_sn:0.0,atacado:0.0},outros:{mineracao:0.0814,ind_cervejeira:0.0814,ind_racao:0.0814,varejo:0.0814,varejo_sn:0.0814,atacado:0.0814}},germe:0.1121},
 };
 
 let D=JSON.parse(JSON.stringify(PADRAO));
 let modalAtual=null;
-const DMAP={premissas:'premissas',formacaoPreco:'formacao_preco',precoSA:'preco_sa',estruturaCustos:'estrutura_custos',frete:'frete',cargaTrib:'carga_tributaria'};
+const DMAP={premissas:'premissas',formacaoPreco:'formacao_preco',precoSA:'preco_sa',estruturaCustos:'estrutura_custos',frete:'frete',cargaTrib:'carga_tributaria',portosExpo:'portos_expo'};
 
 
 // ── Login ──────────────────────────────────────────────────────────────────
@@ -561,8 +608,8 @@ window.mostrarApp=function(){
 }
 
 async function carregarFirebase(){
-  const chaves=['premissas','formacaoPreco','precoSA','estruturaCustos','frete','cargaTrib'];
-  const docs=['premissas','formacao_preco','preco_sa','estrutura_custos','frete','carga_tributaria'];
+  const chaves=['premissas','formacaoPreco','precoSA','estruturaCustos','frete','cargaTrib','portosExpo'];
+  const docs=['premissas','formacao_preco','preco_sa','estrutura_custos','frete','carga_tributaria','portos_expo'];
   try{
     const snaps=await Promise.all(docs.map(d=>getDoc(doc(db,'cadastros',d))));
     snaps.forEach((s,i)=>{if(s.exists())D[chaves[i]]={...PADRAO[chaves[i]],...s.data()};});
@@ -755,7 +802,17 @@ function gerarForm(tipo){
     h+=sec('Gérmen de Milho');
     h+=c('Carga Tributária Total','ct_germe',(D.cargaTrib.germe*100).toFixed(3),'','%','');
   }
-  h+=`<button class="btn-salvar" onclick="salvarModal()">💾 Salvar no Firebase</button>`;
+  }else if(tipo==='portosExpo'){
+    h+=sec('Tarifas de Frete por Porto (R$/ton)');
+    const portos=D.portosExpo||{};
+    const ufs=Object.keys(portos).sort();
+    ufs.forEach(uf=>{
+      h+=`<div class="sec-label" style="margin-top:8px">${uf}</div>`;
+      (portos[uf]||[]).forEach((p,i)=>{
+        h+=c(p.porto,'porto_'+uf+'_'+i,p.frete_ton,'R$','/ton','');
+      });
+    });
+    h+=`<button class="btn-salvar" onclick="salvarModal()">💾 Salvar no Firebase</button>`;
   return h;
 }
 
@@ -871,19 +928,38 @@ window.selecionarFreteExpo=function(tipo){
   expoLimpar();
 };
 
-function expoPopularCidades(ufId, cidadeId){
+function expoPopularCidades(ufId, portoId, freteId){
   const uf=document.getElementById(ufId)?.value;
-  const sel=document.getElementById(cidadeId);
+  const sel=document.getElementById(portoId);
   if(!sel) return;
   sel.innerHTML='';
-  (PORTOS_EXPO[uf]||[]).forEach(cidade=>{
-    const o=document.createElement('option');o.value=cidade;o.textContent=cidade;sel.appendChild(o);
+  const portos=(D.portosExpo||{})[uf]||[];
+  portos.forEach(({porto})=>{
+    const o=document.createElement('option');o.value=porto;o.textContent=porto;sel.appendChild(o);
   });
+  // Preencher frete pré-cadastrado do primeiro porto
+  if(freteId && portos.length>0){
+    const inp=document.getElementById(freteId);
+    if(inp) inp.value=portos[0].frete_ton;
+  }
+}
+function expoAtualizarFrete(ufId, portoId, freteId){
+  const uf=document.getElementById(ufId)?.value;
+  const porto=document.getElementById(portoId)?.value;
+  const portos=(D.portosExpo||{})[uf]||[];
+  const found=portos.find(p=>p.porto===porto);
+  if(found && freteId){
+    const inp=document.getElementById(freteId);
+    if(inp) inp.value=found.frete_ton;
+  }
 }
 
-window.expoFiltrarCidades=function(){ expoPopularCidades('expo_uf','expo_cidade'); };
-window.expoFiltrarCidadesFOB=function(){ expoPopularCidades('expo_uf_fob','expo_cidade_fob'); };
-window.expoFiltrarCidadesCIF=function(){ expoPopularCidades('expo_uf_cif','expo_cidade_cif'); };
+window.expoFiltrarCidades=function(){ expoPopularCidades('expo_uf','expo_porto_fca','expo_frete_rdv_fca'); };
+window.expoAtualizarPortoFCA=function(){ expoAtualizarFrete('expo_uf','expo_porto_fca','expo_frete_rdv_fca'); };
+window.expoFiltrarCidadesFOB=function(){ expoPopularCidades('expo_uf_fob','expo_porto_fob','expo_frete_rdv_fob'); };
+window.expoAtualizarPortoFOB=function(){ expoAtualizarFrete('expo_uf_fob','expo_porto_fob','expo_frete_rdv_fob'); };
+window.expoFiltrarCidadesCIF=function(){ expoPopularCidades('expo_uf_cif','expo_porto_cif','expo_frete_rdv_cif'); };
+window.expoAtualizarPortoCIF=function(){ expoAtualizarFrete('expo_uf_cif','expo_porto_cif','expo_frete_rdv_cif'); };
 window.expoLimpar=function(){
   document.getElementById('expoResultCard').style.display='none';
   document.getElementById('expoBreakdown').style.display='none';
@@ -940,16 +1016,18 @@ function expoGetFreteTon(){
     const cap=gn('expo_cap_cif')||25;
     const log=calcLogistica('_cif');
     const logTon=log/cap;
-    const intUsd=gn('expo_frete_int_usd');
-    const cambio=gn('expo_cambio')||4.0;
+    const intUsdCntr=gn('expo_frete_int_usd');
+    const qtdCntr=gn('expo_qtd_cntr')||1;
+    const cambio=gn('expo_cambio')||5.37;
     const tonInt=gn('expo_ton_frete_int')||100;
-    const intBrl=intUsd*cambio;
+    const intUsdTotal=intUsdCntr*qtdCntr;
+    const intBrl=intUsdTotal*cambio;
     const intTon=intBrl/tonInt;
     freteTon=freteRdvTon+logTon+intTon;
     detalhes=[
       {desc:'🚛 Frete Rodoviário / ton',val:fmt(freteRdvTon)},
       {desc:'⚓ Logística / ton',val:fmt(logTon)},
-      {desc:'✈️ Frete Int. (USD '+intUsd.toLocaleString('pt-BR')+' × R$'+cambio.toFixed(2)+')',val:fmt(intBrl)},
+      {desc:'✈️ Frete Int. (USD '+intUsdCntr.toLocaleString('pt-BR')+' × '+qtdCntr+' cntr × R$'+cambio.toFixed(2)+')',val:fmt(intBrl)},
       {desc:'✈️ Frete Internacional / ton',val:fmt(intTon)},
       {desc:'📍 Frete Total / ton (CIF)',val:fmt(freteTon)},
     ];
