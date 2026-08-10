@@ -517,6 +517,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="card-body">
           <div class="campo-expo"><label>Lead Time Processo de Exportação (dias)</label>
           <input type="number" id="expo_prazo" value="60" min="0" max="999" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,3)"></div>
+          <div class="campo-expo"><label>Taxa do Dólar (R$/USD) — PTAX - R$0,05</label>
+          <input type="number" id="expo_cambio_geral" value="5.37" step="0.0001" inputmode="decimal" placeholder="Buscando PTAX..."></div>
         </div>
       </div>
 
@@ -525,6 +527,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="result-card" id="expoResultCard" style="display:none">
         <div class="result-label">Preço de Exportação / Tonelada</div>
         <div class="result-valor" id="expoResultValor">—</div>
+        <div id="expoResultUsd" style="color:var(--dourado);font-size:20px;font-weight:700;margin-top:4px;display:none"></div>
         <div class="result-sub" id="expoResultSub"></div>
       </div>
 
@@ -1063,6 +1066,14 @@ window.expoCalcular=function(){
   const vlrComissao = precoFinal*comissao;
 
   document.getElementById('expoResultValor').textContent=fmt(precoFinal);
+  // Valor em USD (só para CIF onde há câmbio definido)
+  const cambioGeral = parseFloat(document.getElementById('expo_cambio_geral')?.value) || 5.37;
+  const valorUsd = precoFinal / cambioGeral;
+  const usdEl = document.getElementById('expoResultUsd');
+  if(usdEl){
+    usdEl.textContent = 'USD ' + valorUsd.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' / ton';
+    usdEl.style.display='block';
+  }
   document.getElementById('expoResultSub').textContent=
     tipoFreteExpo+' · '+prodData.label+' · '+(D.estruturaCustos[embalagem]?.label)+' · '+prazo+' dias';
   document.getElementById('expoResultCard').style.display='block';
@@ -1102,6 +1113,7 @@ function inicializarExpo(){
   expoFiltrarCidades();expoFiltrarCidadesFOB();expoFiltrarCidadesCIF();
   // Buscar PTAX automaticamente
   preencherPTAX('expo_cambio');
+  preencherPTAX('expo_cambio_geral');
 }
 
 
