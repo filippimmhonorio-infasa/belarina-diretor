@@ -519,8 +519,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
           <input type="number" id="expo_prazo" value="60" min="0" max="999" inputmode="numeric" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,3)"></div>
           <div class="campo-expo"><label>Taxa do Dólar (R$/USD) — PTAX - R$0,05</label>
           <input type="number" id="expo_cambio_geral" value="5.37" step="0.0001" inputmode="decimal" placeholder="Buscando PTAX..."></div>
-          <div class="campo-expo"><label>Comissão (%)</label>
-          <input type="number" id="expo_comissao" value="2.00" step="0.01" inputmode="decimal"></div>
+          <div class="campo-expo"><label>Margem de Contribuição (%)</label>
+          <input type="number" id="expo_margem" value="10.00" step="0.01" inputmode="decimal"></div>
         </div>
       </div>
 
@@ -1060,8 +1060,8 @@ window.expoCalcular=function(){
   const taxaMensal = Math.pow(1+taxaAnual,1/12)-1;
   const custoFin   = Math.pow(1+taxaMensal/30,prazo)-1;
 
-  // Tributos = 0 (exportação isenta)
-  const MARGEM   = 0.10;
+  // Tributos = 0 (exportação - imune)
+  const MARGEM   = (parseFloat(document.getElementById('expo_margem')?.value)||10)/100;
   const comissao = D.premissas.comissao!==undefined?D.premissas.comissao:0.02;
   const precoSemCom = (netFob+freteTon)/(1-custoFin-MARGEM);
   const precoFinal  = precoSemCom/(1-comissao);
@@ -1117,8 +1117,8 @@ function inicializarExpo(){
   // Buscar PTAX automaticamente
   preencherPTAX('expo_cambio');
   preencherPTAX('expo_cambio_geral');
-  const inpCom=document.getElementById('expo_comissao');
-  if(inpCom) inpCom.value=((D.premissas.comissao||0.02)*100).toFixed(2);
+  const inpMarg=document.getElementById('expo_margem');
+  if(inpMarg) inpMarg.value='10.00';
 }
 
 
