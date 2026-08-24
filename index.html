@@ -63,11 +63,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .aviso{background:#fff8e8;border-radius:10px;padding:12px 14px;font-size:12px;color:#7a5a00;border:1px solid #f0d080;}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;}
 .modal-overlay.visivel{display:flex;}
-.modal{background:var(--branco);border-radius:20px 20px 0 0;width:100%;max-height:85vh;overflow-y:auto;padding-bottom:32px;}
+.modal{background:var(--branco);border-radius:20px 20px 0 0;width:100%;max-height:85vh;display:flex;flex-direction:column;}
+.modal-body{overflow-y:auto;flex:1;padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
+.modal-footer{padding:16px 20px;border-top:1px solid #f0f2f6;background:var(--branco);flex-shrink:0;}
 .modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0f2f6;position:sticky;top:0;background:var(--branco);}
 .modal-titulo{font-size:17px;font-weight:700;color:var(--azul);}
 .modal-fechar{background:none;border:none;font-size:28px;color:var(--muted);cursor:pointer;line-height:1;}
-.modal-body{padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
 .c-edit{display:flex;flex-direction:column;gap:4px;}
 .c-label{font-size:12px;font-weight:700;color:var(--azul);}
 .c-dica{font-size:11px;color:var(--muted);}
@@ -122,11 +123,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .aviso{background:#fff8e8;border-radius:10px;padding:12px 14px;font-size:12px;color:#7a5a00;border:1px solid #f0d080;}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;}
 .modal-overlay.visivel{display:flex;}
-.modal{background:var(--branco);border-radius:20px 20px 0 0;width:100%;max-height:85vh;overflow-y:auto;padding-bottom:32px;}
+.modal{background:var(--branco);border-radius:20px 20px 0 0;width:100%;max-height:85vh;display:flex;flex-direction:column;}
+.modal-body{overflow-y:auto;flex:1;padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
+.modal-footer{padding:16px 20px;border-top:1px solid #f0f2f6;background:var(--branco);flex-shrink:0;}
 .modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f0f2f6;position:sticky;top:0;background:var(--branco);}
 .modal-titulo{font-size:17px;font-weight:700;color:var(--azul);}
 .modal-fechar{background:none;border:none;font-size:28px;color:var(--muted);cursor:pointer;line-height:1;}
-.modal-body{padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
 .c-edit{display:flex;flex-direction:column;gap:4px;}
 .c-label{font-size:12px;font-weight:700;color:var(--azul);}
 .c-dica{font-size:11px;color:var(--muted);}
@@ -348,6 +350,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <button class="modal-fechar" onclick="fecharModal()">×</button>
     </div>
     <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn-salvar" style="width:100%" onclick="salvarModal()">💾 Salvar no Firebase</button>
+    </div>
   </div>
 </div>
 
@@ -819,8 +824,7 @@ function gerarForm(tipo){
         h+=c(p.porto,'porto_'+uf+'_'+i,p.frete_ton,'R$','/ton','');
       });
     });
-    h+=`<button class="btn-salvar" onclick="salvarModal()">💾 Salvar no Firebase</button>`;
-  }
+    }
   return h;
 }
 
