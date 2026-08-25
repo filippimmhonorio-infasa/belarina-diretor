@@ -1067,7 +1067,8 @@ window.expoCalcular=function(){
   const custoFin   = Math.pow(1+taxaMensal/30,prazo)-1;
 
   // Tributos = 0 (exportação - imune)
-  const MARGEM   = (parseFloat(document.getElementById('expo_margem')?.value)||10)/100;
+  const _margemVal = document.getElementById('expo_margem')?.value;
+  const MARGEM   = (_margemVal===''||_margemVal===null||_margemVal===undefined||isNaN(parseFloat(_margemVal))) ? 0.10 : parseFloat(_margemVal)/100;
   const comissao = D.premissas.comissao!==undefined?D.premissas.comissao:0.02;
   const precoSemCom = (netFob+freteTon)/(1-custoFin-MARGEM);
   const precoFinal  = precoSemCom/(1-comissao);
