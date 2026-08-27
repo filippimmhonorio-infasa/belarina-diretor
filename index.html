@@ -654,7 +654,24 @@ async function carregarFirebase(){
   const docs=['premissas','formacao_preco','preco_sa','estrutura_custos','frete','carga_tributaria','portos_expo'];
   try{
     const snaps=await Promise.all(docs.map(d=>getDoc(doc(db,'cadastros',d))));
-    snaps.forEach((s,i)=>{if(s.exists())D[chaves[i]]={...PADRAO[chaves[i]],...s.data()};});
+    snaps.forEach((s,i)=>{
+      if(s.exists()){
+        const dados=s.data();
+        // Para frete: preservar distancias do PADRAO (mais completas) e só atualizar antt/carga/margem
+        if(chaves[i]==='frete' && dados.distancias){
+          const totalFirebase=Object.values(dados.distancias).reduce((a,v)=>a+(v?.length||0),0);
+          const totalPadrao=Object.values(PADRAO.frete.distancias).reduce((a,v)=>a+v.length,0);
+          if(totalFirebase < totalPadrao){
+            // Firebase tem menos municípios — usar distancias do PADRAO
+            D[chaves[i]]={...PADRAO[chaves[i]],...dados, distancias: PADRAO.frete.distancias};
+          } else {
+            D[chaves[i]]={...PADRAO[chaves[i]],...dados};
+          }
+        } else {
+          D[chaves[i]]={...PADRAO[chaves[i]],...dados};
+        }
+      }
+    });
   }catch(e){console.log('Firebase offline');}
 }
 
