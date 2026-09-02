@@ -253,6 +253,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
               <option value="mineracao">Mineração</option>
             </select>
           </div>
+          <div class="field">
+            <label>Cliente com Tributação Específica?</label>
+            <select id="clienteEspecial" onchange="limparResultado()">
+              <option value="nao">Não</option>
+              <option value="anglo_american">Anglo American Minério de Ferro Brasil S.A.</option>
+            </select>
+          </div>
         </div>
       </div>
       <div class="card">
@@ -747,14 +754,18 @@ window.calcular=function(){
   const taxaMensal=Math.pow(1+taxaAnual,1/12)-1;
   const custoFin=Math.pow(1+taxaMensal/30,prazo)-1;
 
+  const clienteEspecial=document.getElementById('clienteEspecial')?.value||'nao';
   let trib;
   if(produto==='germe'){
-    trib={icms:0.024,fund:0.0067,pis:0.0814,total:D.cargaTrib.germe};
+    const pisGerme=clienteEspecial!=='nao'?0:0.0814;
+    const totalGerme=clienteEspecial!=='nao'?(D.cargaTrib.germe-0.0814):D.cargaTrib.germe;
+    trib={icms:0.024,fund:0.0067,pis:pisGerme,total:totalGerme};
   }else{
     let icms,fund;
     if(uf==='MT'){icms=produto==='fuba'?D.cargaTrib.icms.MT_fuba:D.cargaTrib.icms.MT_outros;fund=produto==='fuba'?D.cargaTrib.fund.MT_fuba:D.cargaTrib.fund.MT_outros;}
     else{icms=D.cargaTrib.icms.outros;fund=D.cargaTrib.fund.outros;}
-    const pis=D.cargaTrib.pisCofins[produto==='fuba'?'fuba':'outros'][cliente]||0;
+    const pisNormal=D.cargaTrib.pisCofins[produto==='fuba'?'fuba':'outros'][cliente]||0;
+    const pis=clienteEspecial!=='nao'?0:pisNormal;
     trib={icms,fund,pis,total:icms+fund+pis};
   }
 
