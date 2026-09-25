@@ -820,7 +820,7 @@ window.calcular=function(){
     const impTon = precoFinal * trib.total;
     set('ald_netfob', fmt(netFobAld));
     set('ald_frete',  isFOB ? 'FOB' : fmt(freteTon));
-    set('ald_fin',    fmtPct(custoFin));
+    set('ald_fin',    fmt(precoFinal * custoFin));
     set('ald_imp',    fmt(impTon));
     set('ald_total',  fmt(precoFinal));
   }
