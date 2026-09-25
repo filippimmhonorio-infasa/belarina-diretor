@@ -816,12 +816,15 @@ window.calcular=function(){
   if(window._perfilAtual === 'aldrey'){
     document.getElementById('breakdown').classList.remove('visivel');
     document.getElementById('breakdown-aldrey').style.display='block';
-    const netFobAld = fobProd + custoProd;
-    const impTon = precoFinal * trib.total;
-    set('ald_netfob', fmt(netFobAld));
-    set('ald_frete',  isFOB ? 'FOB' : fmt(freteTon));
-    set('ald_fin',    fmt(precoFinal * custoFin));
-    set('ald_imp',    fmt(impTon));
+    // NET FOB aparente = Preço Final menos os demais componentes visíveis
+    const aldFrete = isFOB ? 0 : freteTon;
+    const aldFin   = precoFinal * custoFin;
+    const aldImp   = precoFinal * trib.total;
+    const aldNetFobAparente = precoFinal - aldFrete - aldFin - aldImp;
+    set('ald_netfob', fmt(aldNetFobAparente));
+    set('ald_frete',  isFOB ? 'FOB' : fmt(aldFrete));
+    set('ald_fin',    fmt(aldFin));
+    set('ald_imp',    fmt(aldImp));
     set('ald_total',  fmt(precoFinal));
   }
   document.getElementById('resultCard').scrollIntoView({behavior:'smooth'});
