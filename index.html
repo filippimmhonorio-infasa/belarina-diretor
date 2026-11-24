@@ -315,10 +315,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="bd-row"><span class="desc">🛣️ KM rodados</span><span class="val" id="bKm">—</span></div>
         <div class="bd-row"><span class="desc">🚛 Frete Líquido</span><span class="val" id="bFreteLiq">—</span></div>
         <div class="bd-row"><span class="desc">🚚 Margem Transportadora</span><span class="val" id="bMargFrete">—</span></div>
-        <div class="bd-row"><span class="desc">📋 ICMS Frete (12%)</span><span class="val" id="bIcmsFrete">—</span></div>
+        <div class="bd-row"><span class="desc">📋 ( − ) ICMS Frete (12%) — crédito</span><span class="val" id="bIcmsFrete">—</span></div>
         <div class="bd-row"><span class="desc">🅿️ Pedágio</span><span class="val" id="bPedagio">—</span></div>
         <div class="bd-row dest"><span class="desc">🚛 Frete Total</span><span class="val" id="bFrete">—</span></div>
         <div class="bd-row"><span class="desc">📍 Frete / ton</span><span class="val" id="bFreteTon">—</span></div>
+        <div class="bd-row"><span class="desc">ℹ️ Valor pago à transportadora (referência)</span><span class="val" id="bPagoTransp">—</span></div>
         <div class="bd-row"><span class="desc">⏱ Custo Financeiro</span><span class="val" id="bFin">—</span></div>
         <div class="bd-row"><span class="desc">🧾 Carga Tributária</span><span class="val" id="bTrib">—</span></div>
         <div class="trib-sub" id="tribSub"></div>
@@ -750,9 +751,10 @@ window.calcular=function(){
   const pedagioFinal=isFOB?0:pedagio;
   const freteLiq=isFOB?0:km*D.frete.antt+D.frete.cargaDescarga;
   const icmsFrete=isFOB?0:freteLiq*D.frete.icmsFrete;
-  const subtotalFrete=isFOB?0:freteLiq+icmsFrete+pedagioFinal;
+  const subtotalFrete=isFOB?0:freteLiq+pedagioFinal;
   const margFrete=isFOB?0:subtotalFrete*D.frete.margem;
-  const freteTotal=isFOB?0:subtotalFrete+margFrete;
+  // ICMS do frete é crédito tributário: reduz o custo do frete
+  const freteTotal=isFOB?0:subtotalFrete+margFrete-icmsFrete;
   const freteTon=isFOB?0:freteTotal/capacidade;
 
   const prodData=D.precoSA[produto];
@@ -797,9 +799,11 @@ window.calcular=function(){
 // Breakdown completo para o diretor
   set('bCusto',fmt(custoProd));set('bFob',fmt(fobProd));set('bNetFob',fmt(netFob));
   set('bKm',km.toLocaleString('pt-BR')+' km');set('bFreteLiq',fmt(freteLiq));
-  set('bMargFrete',fmt(margFrete));set('bIcmsFrete',fmt(icmsFrete));
+  set('bMargFrete',fmt(margFrete));set('bIcmsFrete','− '+fmt(icmsFrete));
   set('bPedagio',fmt(pedagioFinal));
   set('bFrete',fmt(freteTotal));set('bFreteTon',fmt(freteTon));
+  // Referência (não entra no preço): subtotal + margem + crédito de ICMS
+  set('bPagoTransp',fmt(freteTotal+icmsFrete)+' — '+fmt(isFOB?0:(freteTotal+icmsFrete)/capacidade)+' / ton');
   set('bFin',fmtPct(custoFin)+' ('+prazo+'d) — '+fmt(precoFinal*custoFin));
   set('bTrib',fmtPct(trib.total));
   document.getElementById('tribSub').innerHTML=
@@ -935,7 +939,7 @@ window.renderKm=function(){
   if(!uf||!div)return;
   div.innerHTML='';
   (D.frete.distancias[uf]||[]).forEach((c,i)=>{
-    const l=c.km*D.frete.antt+D.frete.cargaDescarga,ic=l*D.frete.icmsFrete,sub=l+ic,m=sub*D.frete.margem,t=sub+m;
+    const l=c.km*D.frete.antt+D.frete.cargaDescarga,ic=l*D.frete.icmsFrete,sub=l,m=sub*D.frete.margem,t=sub+m-ic;
     div.innerHTML+=`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f0f2f6"><span style="flex:2;font-size:13px">${c.cidade}</span><input id="km_${i}" value="${c.km}" style="flex:1;border:1.5px solid var(--borda);border-radius:7px;padding:6px 8px;font-size:13px;text-align:center" inputmode="numeric"><span style="flex:1.5;font-size:11px;color:var(--muted);text-align:right">R$ ${t.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>`;
   });
 };
@@ -1073,9 +1077,10 @@ function expoGetFreteTon(){
     const cd=(D.frete.distancias[uf]||[]).find(c=>c.cidade===cidade);
     const km=cd?cd.km:0;
     const liq=km*D.frete.antt+D.frete.cargaDescarga;
-    const marg=liq*D.frete.margem;
-    const icms=(liq+marg)*D.frete.icmsFrete;
-    const total=liq+marg+icms+pedagio;
+    const icms=liq*D.frete.icmsFrete;
+    const sub=liq+pedagio;
+    const marg=sub*D.frete.margem;
+    const total=sub+marg-icms;
     return {km, total, ton: total/cap};
   }
 
